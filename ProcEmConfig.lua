@@ -123,7 +123,7 @@ function ProcEm:CreateConfigRow(index)
         local procName = ProcEm.trackedProcs[index]
         if procName and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
             local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
-            PlaySoundFile("Interface\\AddOns\\ProcEm\\" .. tostring(soundNum) .. ".mp3")
+            PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
         end
     end)
 

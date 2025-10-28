@@ -142,7 +142,7 @@ function ProcEm:RecordProc(procName)
     if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
         if ProcEmDB.procSounds[procName].enabled and ProcEmDB.procSounds[procName].soundNum then
             local soundNum = ProcEmDB.procSounds[procName].soundNum
-            PlaySoundFile("Interface\\AddOns\\ProcEm\\" .. tostring(soundNum) .. ".mp3")
+            PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
         end
     end
 

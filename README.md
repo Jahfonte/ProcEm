@@ -26,14 +26,14 @@ Simple, clean proc tracker with custom sound support.
 
 ## Custom Sounds
 
-Place your custom .mp3 files in the addon folder:
+Place your custom .mp3 files in the addon sound folder:
 
 ```
-Interface/AddOns/ProcEm/1.mp3
-Interface/AddOns/ProcEm/2.mp3
-Interface/AddOns/ProcEm/3.mp3
-Interface/AddOns/ProcEm/4.mp3
-Interface/AddOns/ProcEm/5.mp3
+Interface/AddOns/ProcEm/sound/1.mp3
+Interface/AddOns/ProcEm/sound/2.mp3
+Interface/AddOns/ProcEm/sound/3.mp3
+Interface/AddOns/ProcEm/sound/4.mp3
+Interface/AddOns/ProcEm/sound/5.mp3
 ```
 
 Each proc can use a different sound (1-5).
