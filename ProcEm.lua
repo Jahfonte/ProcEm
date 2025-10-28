@@ -27,6 +27,7 @@ ProcEm.defaultDB = {
     displaySize = {250, 300},
     configSize = {360, 450},
     trackedProcs = {},
+    procSounds = {},
     customProcs = {},
     bossStats = {},
 }
@@ -137,9 +138,12 @@ function ProcEm:RecordProc(procName)
         ProcEmDB.bossStats[self.currentBoss][procName] = ProcEmDB.bossStats[self.currentBoss][procName] + 1
     end
 
-    -- Play sound
-    if ProcEmDB.soundEnabled and proc.sound then
-        PlaySound(proc.sound)
+    -- Play custom sound
+    if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
+        if ProcEmDB.procSounds[procName].enabled and ProcEmDB.procSounds[procName].soundNum then
+            local soundNum = ProcEmDB.procSounds[procName].soundNum
+            PlaySoundFile("Interface\\AddOns\\ProcEm\\" .. tostring(soundNum) .. ".mp3")
+        end
     end
 
     -- Update display

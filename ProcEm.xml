@@ -3,7 +3,7 @@
     <!-- Main Display Frame -->
     <Frame name="ProcEmFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="250" y="300"/>
+            <AbsDimension x="250" y="280"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -26,7 +26,7 @@
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
-                                <AbsDimension x="0" y="-15"/>
+                                <AbsDimension x="0" y="-12"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -36,7 +36,7 @@
                     <Anchors>
                         <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
                             <Offset>
-                                <AbsDimension x="0" y="-5"/>
+                                <AbsDimension x="0" y="-3"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -82,12 +82,12 @@
 
         <Button name="$parent_ResetButton" inherits="GameMenuButtonTemplate" text="Reset">
             <Size>
-                <AbsDimension x="80" y="25"/>
+                <AbsDimension x="70" y="22"/>
             </Size>
             <Anchors>
-                <Anchor point="BOTTOMLEFT">
+                <Anchor point="BOTTOM">
                     <Offset>
-                        <AbsDimension x="15" y="10"/>
+                        <AbsDimension x="0" y="8"/>
                     </Offset>
                 </Anchor>
             </Anchors>
@@ -95,19 +95,19 @@
                 <OnClick>
                     ProcEm:InitSessionProcs()
                     ProcEm:UpdateDisplay()
-                    ProcEm:Print("Session reset")
+                    ProcEm:Print("Counters reset")
                 </OnClick>
             </Scripts>
         </Button>
 
         <Button name="$parent_ConfigButton" inherits="GameMenuButtonTemplate" text="Config">
             <Size>
-                <AbsDimension x="80" y="25"/>
+                <AbsDimension x="70" y="22"/>
             </Size>
             <Anchors>
                 <Anchor point="BOTTOMRIGHT">
                     <Offset>
-                        <AbsDimension x="-15" y="10"/>
+                        <AbsDimension x="-12" y="8"/>
                     </Offset>
                 </Anchor>
             </Anchors>
@@ -145,10 +145,10 @@
         </Scripts>
     </Frame>
 
-    <!-- Simple Config Frame -->
+    <!-- Config Frame -->
     <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="360" y="450"/>
+            <AbsDimension x="400" y="450"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -247,7 +247,7 @@
         <Scripts>
             <OnLoad>
                 this:RegisterForDrag("LeftButton")
-                this:SetMinResize(360, 450)
+                this:SetMinResize(400, 450)
                 this:SetMaxResize(600, 800)
             </OnLoad>
             <OnDragStart>
