@@ -25,7 +25,8 @@ ProcEm.defaultDB = {
         y = 0,
     },
     displaySize = {250, 300},
-    configSize = {320, 450},
+    configSize = {360, 450},
+    trackedProcs = {},
     customProcs = {},
     bossStats = {},
 }

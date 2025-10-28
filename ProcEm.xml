@@ -22,7 +22,7 @@
 
         <Layers>
             <Layer level="ARTWORK">
-                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm - Session">
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm">
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
@@ -95,7 +95,7 @@
                 <OnClick>
                     ProcEm:InitSessionProcs()
                     ProcEm:UpdateDisplay()
-                    ProcEm:Print("Session counters reset")
+                    ProcEm:Print("Session reset")
                 </OnClick>
             </Scripts>
         </Button>
@@ -145,10 +145,10 @@
         </Scripts>
     </Frame>
 
-    <!-- Configuration Frame -->
+    <!-- Simple Config Frame -->
     <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="350" y="450"/>
+            <AbsDimension x="360" y="450"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -167,7 +167,7 @@
 
         <Layers>
             <Layer level="ARTWORK">
-                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm Configuration">
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="CONFIG WINDOW">
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
@@ -214,57 +214,6 @@
             <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
         </Button>
 
-        <Button name="$parent_ScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
-            <Anchors>
-                <Anchor point="TOPRIGHT">
-                    <Offset>
-                        <AbsDimension x="-8" y="-50"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    ProcEm:ConfigScrollUp()
-                </OnClick>
-            </Scripts>
-        </Button>
-
-        <Button name="$parent_ScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
-            <Anchors>
-                <Anchor point="BOTTOM" relativeTo="$parent_AlphaSlider" relativePoint="TOP">
-                    <Offset>
-                        <AbsDimension x="140" y="5"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    ProcEm:ConfigScrollDown()
-                </OnClick>
-            </Scripts>
-        </Button>
-
-        <Frame name="$parent_ScrollBar">
-            <Size>
-                <AbsDimension x="16" y="1"/>
-            </Size>
-            <Anchors>
-                <Anchor point="TOP" relativeTo="$parent_ScrollUpButton" relativePoint="BOTTOM"/>
-                <Anchor point="BOTTOM" relativeTo="$parent_ScrollDownButton" relativePoint="TOP"/>
-            </Anchors>
-            <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
-                <EdgeSize>
-                    <AbsValue val="8"/>
-                </EdgeSize>
-                <TileSize>
-                    <AbsValue val="8"/>
-                </TileSize>
-                <BackgroundInsets>
-                    <AbsInset left="3" right="3" top="3" bottom="3"/>
-                </BackgroundInsets>
-            </Backdrop>
-        </Frame>
-
         <Slider name="$parent_AlphaSlider" inherits="OptionsSliderTemplate">
             <Size>
                 <AbsDimension x="200" y="16"/>
@@ -298,9 +247,8 @@
         <Scripts>
             <OnLoad>
                 this:RegisterForDrag("LeftButton")
-                this:SetMinResize(320, 400)
+                this:SetMinResize(360, 450)
                 this:SetMaxResize(600, 800)
-                this.scrollOffset = 0
             </OnLoad>
             <OnDragStart>
                 this:StartMoving()

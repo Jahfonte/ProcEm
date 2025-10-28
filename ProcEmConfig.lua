@@ -1,46 +1,148 @@
 local getn = table.getn
 
-ProcEm.configCheckboxes = {}
-ProcEm.NUM_CONFIG_ROWS = 15
+ProcEm.configRows = {}
+ProcEm.MAX_TRACKED_PROCS = 10
+ProcEm.trackedProcs = {}
 
-function ProcEm:CreateConfigCheckboxes()
-    for i = 1, self.NUM_CONFIG_ROWS do
-        local row = CreateFrame("CheckButton", "ProcEmConfigRow"..tostring(i), ProcEmConfigFrame, "OptionsCheckButtonTemplate")
+function ProcEm:GetAvailableProcs()
+    local available = {}
+    for procName, proc in pairs(ProcEmData.Procs) do
+        table.insert(available, procName)
+    end
+    table.sort(available)
+    return available
+end
 
-        row:SetWidth(280)
-        row:SetHeight(20)
+function ProcEm:CreateConfigRow(index)
+    local yOffset = -50 - ((index - 1) * 35)
 
-        if i == 1 then
-            row:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 20, -50)
-        else
-            row:SetPoint("TOPLEFT", "ProcEmConfigRow"..tostring(i-1), "BOTTOMLEFT", 0, 0)
-        end
+    local dropdown = CreateFrame("Frame", "ProcEmConfigDropdown"..tostring(index), ProcEmConfigFrame)
+    dropdown:SetWidth(280)
+    dropdown:SetHeight(25)
+    dropdown:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 20, yOffset)
+    dropdown:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        tile = true,
+        tileSize = 32,
+        edgeSize = 16,
+        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    })
 
-        local label = _G["ProcEmConfigRow"..tostring(i).."Text"]
-        if label then
-            label:SetFont("Fonts\\FRIZQT__.TTF", 10)
-            label:SetTextColor(1, 1, 1)
-        end
+    local text = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    text:SetPoint("LEFT", dropdown, "LEFT", 8, 0)
+    text:SetText("Click to select...")
+    dropdown.text = text
 
-        row:SetScript("OnClick", function()
-            local procName = this.procName
-            if procName and ProcEmData.Procs[procName] then
-                local enabled = this:GetChecked() == 1
-                ProcEmData.Procs[procName].enabled = enabled
-                ProcEm:SaveProcSettings()
+    local button = CreateFrame("Button", nil, dropdown)
+    button:SetWidth(280)
+    button:SetHeight(25)
+    button:SetPoint("CENTER")
+    button:RegisterForClicks("LeftButtonUp")
+    button:SetScript("OnClick", function()
+        ProcEm:ShowProcSelection(index)
+    end)
+    dropdown.button = button
 
-                if enabled then
-                    if not ProcEm.sessionProcs[procName] then
-                        ProcEm.sessionProcs[procName] = {count = 0, lastProc = 0}
-                    end
-                else
-                    ProcEm.sessionProcs[procName] = nil
+    local checkbox = CreateFrame("CheckButton", "ProcEmConfigCheck"..tostring(index), ProcEmConfigFrame, "OptionsCheckButtonTemplate")
+    checkbox:SetWidth(24)
+    checkbox:SetHeight(24)
+    checkbox:SetPoint("LEFT", dropdown, "RIGHT", 10, 0)
+    checkbox:SetScript("OnClick", function()
+        local procName = ProcEm.trackedProcs[index]
+        if procName and ProcEmData.Procs[procName] then
+            local enabled = this:GetChecked() == 1
+            ProcEmData.Procs[procName].enabled = enabled
+            ProcEm:SaveProcSettings()
+
+            if enabled then
+                if not ProcEm.sessionProcs[procName] then
+                    ProcEm.sessionProcs[procName] = {count = 0, lastProc = 0}
                 end
+            else
+                ProcEm.sessionProcs[procName] = nil
             end
+        end
+    end)
+    dropdown.checkbox = checkbox
+
+    return {dropdown = dropdown, checkbox = checkbox, text = text}
+end
+
+function ProcEm:ShowProcSelection(rowIndex)
+    if ProcEm.selectionFrame then
+        ProcEm.selectionFrame:Hide()
+    end
+
+    local frame = CreateFrame("Frame", "ProcEmSelectionFrame", UIParent)
+    frame:SetWidth(200)
+    frame:SetHeight(300)
+    frame:SetPoint("CENTER")
+    frame:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        tile = true,
+        tileSize = 32,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    frame:SetFrameStrata("DIALOG")
+    frame.rowIndex = rowIndex
+
+    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOP", 0, -15)
+    title:SetText("Select Proc")
+
+    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    close:SetPoint("TOPRIGHT", -5, -5)
+
+    local availableProcs = ProcEm:GetAvailableProcs()
+    local yPos = -45
+
+    for i = 1, getn(availableProcs) do
+        local procName = availableProcs[i]
+        local btn = CreateFrame("Button", nil, frame)
+        btn:SetWidth(180)
+        btn:SetHeight(20)
+        btn:SetPoint("TOP", 0, yPos)
+
+        local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        btnText:SetPoint("LEFT", 5, 0)
+        btnText:SetText(procName)
+
+        btn:SetScript("OnClick", function()
+            ProcEm:SelectProc(rowIndex, procName)
+            frame:Hide()
         end)
 
-        self.configCheckboxes[i] = row
+        btn:SetScript("OnEnter", function()
+            btnText:SetTextColor(1, 1, 0)
+        end)
+
+        btn:SetScript("OnLeave", function()
+            btnText:SetTextColor(1, 1, 1)
+        end)
+
+        yPos = yPos - 22
+
+        if yPos < -270 then
+            break
+        end
     end
+
+    frame:Show()
+    ProcEm.selectionFrame = frame
+end
+
+function ProcEm:SelectProc(rowIndex, procName)
+    ProcEm.trackedProcs[rowIndex] = procName
+
+    if not ProcEmDB.trackedProcs then
+        ProcEmDB.trackedProcs = {}
+    end
+    ProcEmDB.trackedProcs[rowIndex] = procName
+
+    ProcEm:RefreshConfigUI()
 end
 
 function ProcEm:RefreshConfigUI()
@@ -48,116 +150,35 @@ function ProcEm:RefreshConfigUI()
         return
     end
 
-    if getn(self.configCheckboxes) == 0 then
-        self:CreateConfigCheckboxes()
-    end
-
-    if not ProcEmData or not ProcEmData.Procs then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffff0000ProcEm Error: ProcEmData not loaded!|r")
-        return
-    end
-
-    local procList = {}
-    for procName, proc in pairs(ProcEmData.Procs) do
-        table.insert(procList, {name = procName, data = proc})
-    end
-
-    table.sort(procList, function(a, b)
-        if a.data.category ~= b.data.category then
-            return a.data.category < b.data.category
+    if getn(ProcEm.configRows) == 0 then
+        for i = 1, ProcEm.MAX_TRACKED_PROCS do
+            ProcEm.configRows[i] = ProcEm:CreateConfigRow(i)
         end
-        return a.name < b.name
-    end)
+    end
 
-    local numProcs = getn(procList)
-    local scrollOffset = ProcEmConfigFrame.scrollOffset or 0
-
-    local maxScroll = numProcs - self.NUM_CONFIG_ROWS
-    if maxScroll < 0 then maxScroll = 0 end
-    if scrollOffset > maxScroll then scrollOffset = maxScroll end
-    ProcEmConfigFrame.scrollOffset = scrollOffset
-
-    for i = 1, self.NUM_CONFIG_ROWS do
-        local index = i + scrollOffset
-        local row = self.configCheckboxes[i]
-
-        if index <= numProcs then
-            local procEntry = procList[index]
-            local procName = procEntry.name
-            local proc = procEntry.data
-
-            row:SetChecked(proc.enabled)
-            row.procName = procName
-
-            local label = _G["ProcEmConfigRow"..tostring(i).."Text"]
-            if label then
-                local color = "|cffffffff"
-                if proc.category == "Weapon" then
-                    color = "|cffff8000"
-                elseif proc.category == "Enchant" then
-                    color = "|cff00ff00"
-                elseif proc.category == "Talent" then
-                    color = "|cff8080ff"
-                elseif proc.category == "Trinket" then
-                    color = "|cfffff000"
-                elseif proc.category == "Ability" then
-                    color = "|cffff6060"
-                end
-
-                label:SetText(color .. tostring(procName) .. "|r |cff888888[" .. tostring(proc.category) .. "]|r")
+    if ProcEmDB.trackedProcs then
+        for i = 1, ProcEm.MAX_TRACKED_PROCS do
+            local procName = ProcEmDB.trackedProcs[i]
+            if procName then
+                ProcEm.trackedProcs[i] = procName
             end
-
-            row:Show()
-        else
-            row:Hide()
         end
     end
 
-    if ProcEmConfigFrame_ScrollBar then
-        local thumbHeight = (self.NUM_CONFIG_ROWS / numProcs) * 100
-        if thumbHeight > 100 then thumbHeight = 100 end
-        if thumbHeight < 10 then thumbHeight = 10 end
+    for i = 1, ProcEm.MAX_TRACKED_PROCS do
+        local row = ProcEm.configRows[i]
+        local procName = ProcEm.trackedProcs[i]
 
-        if numProcs <= self.NUM_CONFIG_ROWS then
-            ProcEmConfigFrame_ScrollBar:Hide()
+        if procName and ProcEmData.Procs[procName] then
+            local proc = ProcEmData.Procs[procName]
+            row.text:SetText(procName)
+            row.checkbox:SetChecked(proc.enabled)
+            row.checkbox:Show()
         else
-            ProcEmConfigFrame_ScrollBar:Show()
+            row.text:SetText("Click to select...")
+            row.checkbox:Hide()
         end
     end
-end
-
-function ProcEm:ConfigScrollUp()
-    if not ProcEmConfigFrame.scrollOffset then
-        ProcEmConfigFrame.scrollOffset = 0
-    end
-
-    ProcEmConfigFrame.scrollOffset = ProcEmConfigFrame.scrollOffset - 1
-    if ProcEmConfigFrame.scrollOffset < 0 then
-        ProcEmConfigFrame.scrollOffset = 0
-    end
-
-    self:RefreshConfigUI()
-end
-
-function ProcEm:ConfigScrollDown()
-    if not ProcEmConfigFrame.scrollOffset then
-        ProcEmConfigFrame.scrollOffset = 0
-    end
-
-    local numProcs = 0
-    for _ in pairs(ProcEmData.Procs) do
-        numProcs = numProcs + 1
-    end
-
-    local maxScroll = numProcs - self.NUM_CONFIG_ROWS
-    if maxScroll < 0 then maxScroll = 0 end
-
-    ProcEmConfigFrame.scrollOffset = ProcEmConfigFrame.scrollOffset + 1
-    if ProcEmConfigFrame.scrollOffset > maxScroll then
-        ProcEmConfigFrame.scrollOffset = maxScroll
-    end
-
-    self:RefreshConfigUI()
 end
 
 function ProcEm:UpdateDisplay()
