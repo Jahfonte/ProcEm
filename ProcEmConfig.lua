@@ -1,40 +1,34 @@
--- Local references
 local getn = table.getn
 
--- Configuration state
 ProcEm.configCheckboxes = {}
-ProcEm.NUM_PROC_BUTTONS = 20
+ProcEm.NUM_CONFIG_ROWS = 15
 
--- Create checkbox rows
 function ProcEm:CreateConfigCheckboxes()
-    for i = 1, self.NUM_PROC_BUTTONS do
-        local checkbox = CreateFrame("CheckButton", "ProcEmConfigCheckbox" .. tostring(i), ProcEmConfigFrame_ScrollFrame, "OptionsCheckButtonTemplate")
-        checkbox:SetWidth(260)
-        checkbox:SetHeight(18)
+    for i = 1, self.NUM_CONFIG_ROWS do
+        local row = CreateFrame("CheckButton", "ProcEmConfigRow"..tostring(i), ProcEmConfigFrame, "OptionsCheckButtonTemplate")
 
-        -- Position
+        row:SetWidth(280)
+        row:SetHeight(20)
+
         if i == 1 then
-            checkbox:SetPoint("TOPLEFT", ProcEmConfigFrame_ScrollFrame, "TOPLEFT", 10, -5)
+            row:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 20, -50)
         else
-            checkbox:SetPoint("TOPLEFT", "ProcEmConfigCheckbox" .. tostring(i-1), "BOTTOMLEFT", 0, -2)
+            row:SetPoint("TOPLEFT", "ProcEmConfigRow"..tostring(i-1), "BOTTOMLEFT", 0, 0)
         end
 
-        -- Label
-        local label = _G["ProcEmConfigCheckbox" .. tostring(i) .. "Text"]
+        local label = _G["ProcEmConfigRow"..tostring(i).."Text"]
         if label then
             label:SetFont("Fonts\\FRIZQT__.TTF", 10)
             label:SetTextColor(1, 1, 1)
         end
 
-        -- Click handler
-        checkbox:SetScript("OnClick", function()
+        row:SetScript("OnClick", function()
             local procName = this.procName
             if procName and ProcEmData.Procs[procName] then
                 local enabled = this:GetChecked() == 1
                 ProcEmData.Procs[procName].enabled = enabled
                 ProcEm:SaveProcSettings()
 
-                -- Update session tracking
                 if enabled then
                     if not ProcEm.sessionProcs[procName] then
                         ProcEm.sessionProcs[procName] = {count = 0, lastProc = 0}
@@ -42,33 +36,32 @@ function ProcEm:CreateConfigCheckboxes()
                 else
                     ProcEm.sessionProcs[procName] = nil
                 end
-
-                ProcEm:Debug("Proc " .. tostring(procName) .. " " .. (enabled and "enabled" or "disabled"))
             end
         end)
 
-        self.configCheckboxes[i] = checkbox
+        self.configCheckboxes[i] = row
     end
 end
 
--- Refresh configuration UI
 function ProcEm:RefreshConfigUI()
     if not ProcEmConfigFrame or not ProcEmConfigFrame:IsVisible() then
         return
     end
 
-    -- Create checkboxes if needed
     if getn(self.configCheckboxes) == 0 then
         self:CreateConfigCheckboxes()
     end
 
-    -- Build sorted proc list
+    if not ProcEmData or not ProcEmData.Procs then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff0000ProcEm Error: ProcEmData not loaded!|r")
+        return
+    end
+
     local procList = {}
     for procName, proc in pairs(ProcEmData.Procs) do
         table.insert(procList, {name = procName, data = proc})
     end
 
-    -- Sort by category then name
     table.sort(procList, function(a, b)
         if a.data.category ~= b.data.category then
             return a.data.category < b.data.category
@@ -77,58 +70,101 @@ function ProcEm:RefreshConfigUI()
     end)
 
     local numProcs = getn(procList)
-    local scrollOffset = FauxScrollFrame_GetOffset(ProcEmConfigFrame_ScrollFrame)
+    local scrollOffset = ProcEmConfigFrame.scrollOffset or 0
 
-    -- Update scroll frame
-    FauxScrollFrame_Update(ProcEmConfigFrame_ScrollFrame, numProcs, self.NUM_PROC_BUTTONS, 18)
+    local maxScroll = numProcs - self.NUM_CONFIG_ROWS
+    if maxScroll < 0 then maxScroll = 0 end
+    if scrollOffset > maxScroll then scrollOffset = maxScroll end
+    ProcEmConfigFrame.scrollOffset = scrollOffset
 
-    -- Update checkboxes
-    for i = 1, self.NUM_PROC_BUTTONS do
+    for i = 1, self.NUM_CONFIG_ROWS do
         local index = i + scrollOffset
-        local checkbox = self.configCheckboxes[i]
+        local row = self.configCheckboxes[i]
 
         if index <= numProcs then
             local procEntry = procList[index]
             local procName = procEntry.name
             local proc = procEntry.data
 
-            -- Set checkbox state
-            checkbox:SetChecked(proc.enabled)
-            checkbox.procName = procName
+            row:SetChecked(proc.enabled)
+            row.procName = procName
 
-            -- Set label with category color
-            local label = _G["ProcEmConfigCheckbox" .. tostring(i) .. "Text"]
+            local label = _G["ProcEmConfigRow"..tostring(i).."Text"]
             if label then
-                local categoryColor = ""
-                if proc.category == ProcEmData.CATEGORY.WEAPON then
-                    categoryColor = "|cffff8000"
-                elseif proc.category == ProcEmData.CATEGORY.ENCHANT then
-                    categoryColor = "|cff00ff00"
-                elseif proc.category == ProcEmData.CATEGORY.TALENT then
-                    categoryColor = "|cff8080ff"
-                elseif proc.category == ProcEmData.CATEGORY.TRINKET then
-                    categoryColor = "|cfffff000"
-                else
-                    categoryColor = "|cffffffff"
+                local color = "|cffffffff"
+                if proc.category == "Weapon" then
+                    color = "|cffff8000"
+                elseif proc.category == "Enchant" then
+                    color = "|cff00ff00"
+                elseif proc.category == "Talent" then
+                    color = "|cff8080ff"
+                elseif proc.category == "Trinket" then
+                    color = "|cfffff000"
+                elseif proc.category == "Ability" then
+                    color = "|cffff6060"
                 end
 
-                label:SetText(categoryColor .. tostring(procName) .. "|r |cff888888[" .. tostring(proc.category) .. "]|r")
+                label:SetText(color .. tostring(procName) .. "|r |cff888888[" .. tostring(proc.category) .. "]|r")
             end
 
-            checkbox:Show()
+            row:Show()
         else
-            checkbox:Hide()
+            row:Hide()
+        end
+    end
+
+    if ProcEmConfigFrame_ScrollBar then
+        local thumbHeight = (self.NUM_CONFIG_ROWS / numProcs) * 100
+        if thumbHeight > 100 then thumbHeight = 100 end
+        if thumbHeight < 10 then thumbHeight = 10 end
+
+        if numProcs <= self.NUM_CONFIG_ROWS then
+            ProcEmConfigFrame_ScrollBar:Hide()
+        else
+            ProcEmConfigFrame_ScrollBar:Show()
         end
     end
 end
 
--- Update main display
+function ProcEm:ConfigScrollUp()
+    if not ProcEmConfigFrame.scrollOffset then
+        ProcEmConfigFrame.scrollOffset = 0
+    end
+
+    ProcEmConfigFrame.scrollOffset = ProcEmConfigFrame.scrollOffset - 1
+    if ProcEmConfigFrame.scrollOffset < 0 then
+        ProcEmConfigFrame.scrollOffset = 0
+    end
+
+    self:RefreshConfigUI()
+end
+
+function ProcEm:ConfigScrollDown()
+    if not ProcEmConfigFrame.scrollOffset then
+        ProcEmConfigFrame.scrollOffset = 0
+    end
+
+    local numProcs = 0
+    for _ in pairs(ProcEmData.Procs) do
+        numProcs = numProcs + 1
+    end
+
+    local maxScroll = numProcs - self.NUM_CONFIG_ROWS
+    if maxScroll < 0 then maxScroll = 0 end
+
+    ProcEmConfigFrame.scrollOffset = ProcEmConfigFrame.scrollOffset + 1
+    if ProcEmConfigFrame.scrollOffset > maxScroll then
+        ProcEmConfigFrame.scrollOffset = maxScroll
+    end
+
+    self:RefreshConfigUI()
+end
+
 function ProcEm:UpdateDisplay()
     if not ProcEmFrame or not ProcEmFrame:IsVisible() then
         return
     end
 
-    -- Update boss name
     local bossText = _G["ProcEmFrame_BossName"]
     if bossText then
         if self.currentBoss then
@@ -138,7 +174,6 @@ function ProcEm:UpdateDisplay()
         end
     end
 
-    -- Build sorted proc list (only showing procs with counts > 0)
     local displayList = {}
     for procName, data in pairs(self.sessionProcs) do
         if data.count > 0 then
@@ -154,22 +189,14 @@ function ProcEm:UpdateDisplay()
         end
     end
 
-    -- Sort by count descending
     table.sort(displayList, function(a, b)
         return a.count > b.count
     end)
 
     local numProcs = getn(displayList)
-    local scrollFrame = _G["ProcEmFrame_ScrollFrame"]
-    local scrollOffset = FauxScrollFrame_GetOffset(scrollFrame)
     local numVisible = 14
 
-    -- Update scroll frame
-    FauxScrollFrame_Update(scrollFrame, numProcs, numVisible, 14)
-
-    -- Create/update text rows
     for i = 1, numVisible do
-        local index = i + scrollOffset
         local rowName = "ProcEmFrame_Row" .. tostring(i)
         local row = _G[rowName]
 
@@ -181,17 +208,16 @@ function ProcEm:UpdateDisplay()
             row:SetJustifyH("LEFT")
 
             if i == 1 then
-                row:SetPoint("TOPLEFT", scrollFrame, "TOPLEFT", 5, -5)
+                row:SetPoint("TOPLEFT", ProcEmFrame, "TOPLEFT", 15, -60)
             else
                 row:SetPoint("TOPLEFT", "ProcEmFrame_Row" .. tostring(i-1), "BOTTOMLEFT", 0, -2)
             end
         end
 
-        if index <= numProcs then
-            local entry = displayList[index]
+        if i <= numProcs then
+            local entry = displayList[i]
             local r, g, b = entry.color[1], entry.color[2], entry.color[3]
 
-            -- Format: "Nightfall: 15"
             local text = tostring(entry.name) .. ": " .. tostring(entry.count)
             row:SetText(text)
             row:SetTextColor(r, g, b)
@@ -202,43 +228,34 @@ function ProcEm:UpdateDisplay()
     end
 end
 
--- Initialize display on load
 function ProcEm:InitDisplay()
-    -- Restore saved position
     if ProcEmDB.displayPosition then
         local pos = ProcEmDB.displayPosition
         ProcEmFrame:ClearAllPoints()
         ProcEmFrame:SetPoint(pos.point, pos.x, pos.y)
     end
 
-    -- Restore saved size
     if ProcEmDB.displaySize then
         ProcEmFrame:SetWidth(ProcEmDB.displaySize[1])
         ProcEmFrame:SetHeight(ProcEmDB.displaySize[2])
     end
 
-    -- Restore saved alpha
     if ProcEmDB.displayAlpha then
         ProcEmFrame:SetAlpha(ProcEmDB.displayAlpha)
     end
 
-    -- Restore config size
     if ProcEmDB.configSize and ProcEmConfigFrame then
         ProcEmConfigFrame:SetWidth(ProcEmDB.configSize[1])
         ProcEmConfigFrame:SetHeight(ProcEmDB.configSize[2])
     end
 
-    -- Set transparency slider value
     if ProcEmConfigFrame_AlphaSlider then
         ProcEmConfigFrame_AlphaSlider:SetValue((ProcEmDB.displayAlpha or 1.0) * 100)
     end
 
-    -- Set locked state
     if ProcEmDB.displayLocked then
         ProcEmFrame:EnableMouse(false)
     else
         ProcEmFrame:EnableMouse(true)
     end
-
-    -- Hidden by default (toggle with /procem show)
 end

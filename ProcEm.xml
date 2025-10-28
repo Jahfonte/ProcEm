@@ -20,7 +20,31 @@
             </EdgeSize>
         </Backdrop>
 
-        <!-- Resize Button -->
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm - Session">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString name="$parent_BossName" inherits="GameFontNormal" text="">
+                    <Anchors>
+                        <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
+                            <Offset>
+                                <AbsDimension x="0" y="-5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <Color r="1" g="0.5" b="0"/>
+                </FontString>
+            </Layer>
+        </Layers>
+
         <Button name="$parent_ResizeButton">
             <Size>
                 <AbsDimension x="16" y="16"/>
@@ -46,53 +70,6 @@
             <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
         </Button>
 
-        <Layers>
-            <Layer level="ARTWORK">
-                <!-- Title -->
-                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm - Session">
-                    <Anchors>
-                        <Anchor point="TOP" relativeTo="$parent">
-                            <Offset>
-                                <AbsDimension x="0" y="-15"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-
-                <!-- Boss Name -->
-                <FontString name="$parent_BossName" inherits="GameFontNormal" text="">
-                    <Anchors>
-                        <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
-                            <Offset>
-                                <AbsDimension x="0" y="-5"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                    <Color r="1" g="0.5" b="0"/>
-                </FontString>
-            </Layer>
-        </Layers>
-
-        <!-- Scroll Frame for proc list -->
-        <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
-            <Size>
-                <AbsDimension x="210" y="220"/>
-            </Size>
-            <Anchors>
-                <Anchor point="TOP" relativeTo="$parent_BossName" relativePoint="BOTTOM">
-                    <Offset>
-                        <AbsDimension x="0" y="-10"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnVerticalScroll>
-                    FauxScrollFrame_OnVerticalScroll(16, function() ProcEm:UpdateDisplay() end)
-                </OnVerticalScroll>
-            </Scripts>
-        </ScrollFrame>
-
-        <!-- Close Button -->
         <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
             <Anchors>
                 <Anchor point="TOPRIGHT">
@@ -103,7 +80,6 @@
             </Anchors>
         </Button>
 
-        <!-- Reset Button -->
         <Button name="$parent_ResetButton" inherits="GameMenuButtonTemplate" text="Reset">
             <Size>
                 <AbsDimension x="80" y="25"/>
@@ -124,7 +100,6 @@
             </Scripts>
         </Button>
 
-        <!-- Config Button -->
         <Button name="$parent_ConfigButton" inherits="GameMenuButtonTemplate" text="Config">
             <Size>
                 <AbsDimension x="80" y="25"/>
@@ -173,7 +148,7 @@
     <!-- Configuration Frame -->
     <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="320" y="450"/>
+            <AbsDimension x="350" y="450"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -190,7 +165,30 @@
             </EdgeSize>
         </Backdrop>
 
-        <!-- Resize Button -->
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm Configuration">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+            <Anchors>
+                <Anchor point="TOPRIGHT">
+                    <Offset>
+                        <AbsDimension x="-5" y="-5"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </Button>
+
         <Button name="$parent_ResizeButton">
             <Size>
                 <AbsDimension x="16" y="16"/>
@@ -198,7 +196,7 @@
             <Anchors>
                 <Anchor point="BOTTOMRIGHT">
                     <Offset>
-                        <AbsDimension x="-2" y="2"/>
+                        <AbsDimension x="-2" y="42"/>
                     </Offset>
                 </Anchor>
             </Anchors>
@@ -216,60 +214,65 @@
             <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
         </Button>
 
-        <Layers>
-            <Layer level="ARTWORK">
-                <!-- Title -->
-                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm Configuration">
-                    <Anchors>
-                        <Anchor point="TOP">
-                            <Offset>
-                                <AbsDimension x="0" y="-15"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-
-        <!-- Close Button -->
-        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+        <Button name="$parent_ScrollUpButton" inherits="UIPanelScrollUpButtonTemplate">
             <Anchors>
                 <Anchor point="TOPRIGHT">
                     <Offset>
-                        <AbsDimension x="-5" y="-5"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-        </Button>
-
-        <!-- Scroll Frame for proc checkboxes -->
-        <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
-            <Size>
-                <AbsDimension x="280" y="310"/>
-            </Size>
-            <Anchors>
-                <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
-                    <Offset>
-                        <AbsDimension x="0" y="-20"/>
+                        <AbsDimension x="-8" y="-50"/>
                     </Offset>
                 </Anchor>
             </Anchors>
             <Scripts>
-                <OnVerticalScroll>
-                    FauxScrollFrame_OnVerticalScroll(20, function() ProcEm:RefreshConfigUI() end)
-                </OnVerticalScroll>
+                <OnClick>
+                    ProcEm:ConfigScrollUp()
+                </OnClick>
             </Scripts>
-        </ScrollFrame>
+        </Button>
 
-        <!-- Transparency Slider -->
+        <Button name="$parent_ScrollDownButton" inherits="UIPanelScrollDownButtonTemplate">
+            <Anchors>
+                <Anchor point="BOTTOM" relativeTo="$parent_AlphaSlider" relativePoint="TOP">
+                    <Offset>
+                        <AbsDimension x="140" y="5"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnClick>
+                    ProcEm:ConfigScrollDown()
+                </OnClick>
+            </Scripts>
+        </Button>
+
+        <Frame name="$parent_ScrollBar">
+            <Size>
+                <AbsDimension x="16" y="1"/>
+            </Size>
+            <Anchors>
+                <Anchor point="TOP" relativeTo="$parent_ScrollUpButton" relativePoint="BOTTOM"/>
+                <Anchor point="BOTTOM" relativeTo="$parent_ScrollDownButton" relativePoint="TOP"/>
+            </Anchors>
+            <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
+                <EdgeSize>
+                    <AbsValue val="8"/>
+                </EdgeSize>
+                <TileSize>
+                    <AbsValue val="8"/>
+                </TileSize>
+                <BackgroundInsets>
+                    <AbsInset left="3" right="3" top="3" bottom="3"/>
+                </BackgroundInsets>
+            </Backdrop>
+        </Frame>
+
         <Slider name="$parent_AlphaSlider" inherits="OptionsSliderTemplate">
             <Size>
-                <AbsDimension x="180" y="16"/>
+                <AbsDimension x="200" y="16"/>
             </Size>
             <Anchors>
                 <Anchor point="BOTTOM">
                     <Offset>
-                        <AbsDimension x="0" y="35"/>
+                        <AbsDimension x="-10" y="35"/>
                     </Offset>
                 </Anchor>
             </Anchors>
@@ -295,8 +298,9 @@
         <Scripts>
             <OnLoad>
                 this:RegisterForDrag("LeftButton")
-                this:SetMinResize(280, 350)
+                this:SetMinResize(320, 400)
                 this:SetMaxResize(600, 800)
+                this.scrollOffset = 0
             </OnLoad>
             <OnDragStart>
                 this:StartMoving()
@@ -304,6 +308,9 @@
             <OnDragStop>
                 this:StopMovingOrSizing()
             </OnDragStop>
+            <OnShow>
+                ProcEm:RefreshConfigUI()
+            </OnShow>
         </Scripts>
     </Frame>
 
