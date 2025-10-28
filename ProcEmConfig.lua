@@ -121,9 +121,12 @@ function ProcEm:CreateConfigRow(index)
     testButton:SetText("Test")
     testButton:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
-        if procName and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
-            local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
-            PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+        if procName then
+            DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+            if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
+                local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
+                PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+            end
         end
     end)
 
@@ -217,7 +220,7 @@ function ProcEm:ShowProcSelection(rowIndex)
     end
 
     local frame = CreateFrame("Frame", "ProcEmSelectionFrame", UIParent)
-    frame:SetWidth(200)
+    frame:SetWidth(220)
     frame:SetHeight(400)
     frame:SetPoint("CENTER", UIParent, "CENTER")
     frame:SetBackdrop({
@@ -238,15 +241,27 @@ function ProcEm:ShowProcSelection(rowIndex)
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
 
-    local availableProcs = ProcEm:GetAvailableProcs()
-    local yPos = -45
+    local scrollFrame = CreateFrame("ScrollFrame", "ProcEmScrollFrame", frame)
+    scrollFrame:SetWidth(180)
+    scrollFrame:SetHeight(330)
+    scrollFrame:SetPoint("TOP", frame, "TOP", -10, -45)
 
-    for i = 1, getn(availableProcs) do
+    local scrollChild = CreateFrame("Frame", nil, scrollFrame)
+    scrollFrame:SetScrollChild(scrollChild)
+    scrollChild:SetWidth(180)
+
+    local availableProcs = ProcEm:GetAvailableProcs()
+    local numProcs = getn(availableProcs)
+    local contentHeight = numProcs * 20
+    scrollChild:SetHeight(contentHeight)
+
+    local yPos = 0
+    for i = 1, numProcs do
         local procName = availableProcs[i]
-        local btn = CreateFrame("Button", nil, frame)
+        local btn = CreateFrame("Button", nil, scrollChild)
         btn:SetWidth(180)
         btn:SetHeight(18)
-        btn:SetPoint("TOP", frame, "TOP", 0, yPos)
+        btn:SetPoint("TOP", scrollChild, "TOP", 0, yPos)
 
         local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         btnText:SetPoint("LEFT", btn, "LEFT", 5, 0)
@@ -267,11 +282,44 @@ function ProcEm:ShowProcSelection(rowIndex)
         end)
 
         yPos = yPos - 20
-
-        if yPos < -370 then
-            break
-        end
     end
+
+    local scrollBar = CreateFrame("Slider", "ProcEmScrollBar", scrollFrame)
+    scrollBar:SetWidth(16)
+    scrollBar:SetHeight(scrollFrame:GetHeight())
+    scrollBar:SetPoint("TOPRIGHT", scrollFrame, "TOPRIGHT", 20, 0)
+    scrollBar:SetMinMaxValues(0, contentHeight - scrollFrame:GetHeight())
+    scrollBar:SetValueStep(20)
+    scrollBar:SetValue(0)
+    scrollBar:SetBackdrop({
+        bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+        edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+        tile = true,
+        tileSize = 8,
+        edgeSize = 8,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+    })
+
+    local thumb = scrollBar:CreateTexture(nil, "OVERLAY")
+    thumb:SetTexture("Interface\\Buttons\\UI-SliderBar-Button-Vertical")
+    thumb:SetWidth(16)
+    thumb:SetHeight(24)
+    scrollBar:SetThumbTexture(thumb)
+
+    scrollBar:SetScript("OnValueChanged", function()
+        scrollFrame:SetVerticalScroll(this:GetValue())
+    end)
+
+    scrollFrame:EnableMouseWheel(1)
+    scrollFrame:SetScript("OnMouseWheel", function()
+        local current = scrollBar:GetValue()
+        local minVal, maxVal = scrollBar:GetMinMaxValues()
+        if arg1 > 0 then
+            scrollBar:SetValue(math.max(minVal, current - 40))
+        else
+            scrollBar:SetValue(math.min(maxVal, current + 40))
+        end
+    end)
 
     frame:Show()
     ProcEm.selectionFrame = frame
