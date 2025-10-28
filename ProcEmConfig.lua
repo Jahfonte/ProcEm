@@ -9,8 +9,8 @@ ProcEm.NUM_PROC_BUTTONS = 20
 function ProcEm:CreateConfigCheckboxes()
     for i = 1, self.NUM_PROC_BUTTONS do
         local checkbox = CreateFrame("CheckButton", "ProcEmConfigCheckbox" .. tostring(i), ProcEmConfigFrame_ScrollFrame, "OptionsCheckButtonTemplate")
-        checkbox:SetWidth(400)
-        checkbox:SetHeight(20)
+        checkbox:SetWidth(260)
+        checkbox:SetHeight(18)
 
         -- Position
         if i == 1 then
@@ -22,7 +22,7 @@ function ProcEm:CreateConfigCheckboxes()
         -- Label
         local label = _G["ProcEmConfigCheckbox" .. tostring(i) .. "Text"]
         if label then
-            label:SetFont("Fonts\\FRIZQT__.TTF", 11)
+            label:SetFont("Fonts\\FRIZQT__.TTF", 10)
             label:SetTextColor(1, 1, 1)
         end
 
@@ -80,7 +80,7 @@ function ProcEm:RefreshConfigUI()
     local scrollOffset = FauxScrollFrame_GetOffset(ProcEmConfigFrame_ScrollFrame)
 
     -- Update scroll frame
-    FauxScrollFrame_Update(ProcEmConfigFrame_ScrollFrame, numProcs, self.NUM_PROC_BUTTONS, 20)
+    FauxScrollFrame_Update(ProcEmConfigFrame_ScrollFrame, numProcs, self.NUM_PROC_BUTTONS, 18)
 
     -- Update checkboxes
     for i = 1, self.NUM_PROC_BUTTONS do
@@ -162,10 +162,10 @@ function ProcEm:UpdateDisplay()
     local numProcs = getn(displayList)
     local scrollFrame = _G["ProcEmFrame_ScrollFrame"]
     local scrollOffset = FauxScrollFrame_GetOffset(scrollFrame)
-    local numVisible = 18
+    local numVisible = 14
 
     -- Update scroll frame
-    FauxScrollFrame_Update(scrollFrame, numProcs, numVisible, 16)
+    FauxScrollFrame_Update(scrollFrame, numProcs, numVisible, 14)
 
     -- Create/update text rows
     for i = 1, numVisible do
@@ -175,9 +175,9 @@ function ProcEm:UpdateDisplay()
 
         if not row then
             row = ProcEmFrame:CreateFontString(rowName, "OVERLAY", "GameFontNormal")
-            row:SetFont("Fonts\\FRIZQT__.TTF", 11)
-            row:SetWidth(250)
-            row:SetHeight(16)
+            row:SetFont("Fonts\\FRIZQT__.TTF", 10)
+            row:SetWidth(200)
+            row:SetHeight(14)
             row:SetJustifyH("LEFT")
 
             if i == 1 then
@@ -218,6 +218,5 @@ function ProcEm:InitDisplay()
         ProcEmFrame:EnableMouse(true)
     end
 
-    -- Show frame
-    ProcEmFrame:Show()
+    -- Hidden by default (toggle with /procem show)
 end

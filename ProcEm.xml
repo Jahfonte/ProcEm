@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
     <!-- Main Display Frame -->
-    <Frame name="ProcEmFrame" parent="UIParent" movable="true" enableMouse="true" hidden="false">
+    <Frame name="ProcEmFrame" parent="UIParent" movable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="300" y="400"/>
+            <AbsDimension x="250" y="300"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -50,7 +50,7 @@
         <!-- Scroll Frame for proc list -->
         <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
             <Size>
-                <AbsDimension x="260" y="320"/>
+                <AbsDimension x="210" y="220"/>
             </Size>
             <Anchors>
                 <Anchor point="TOP" relativeTo="$parent_BossName" relativePoint="BOTTOM">
@@ -146,7 +146,7 @@
     <!-- Configuration Frame -->
     <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="500" y="550"/>
+            <AbsDimension x="320" y="400"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -192,7 +192,7 @@
         <!-- Scroll Frame for proc checkboxes -->
         <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
             <Size>
-                <AbsDimension x="460" y="450"/>
+                <AbsDimension x="280" y="310"/>
             </Size>
             <Anchors>
                 <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
