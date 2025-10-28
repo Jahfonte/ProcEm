@@ -46,8 +46,8 @@ Each proc can use a different sound (1-5).
 - `/procem show` - Show proc tracker
 - `/procem hide` - Hide proc tracker
 - `/procem toggle` - Enable/disable tracking
-- `/procem soundforce` - Toggle force SFX+volume for alerts
-- `/procem soundvol <0..1>` - Set forced alert volume
+- `/procem soundforce` - Toggle forced alert volume
+- `/procem soundvol <0..1>` - Set forced alert volume (0.0–1.0)
 - `/procem reset` - Reset session counters
 - `/procem lock` - Lock window position
 - `/procem unlock` - Unlock window position

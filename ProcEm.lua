@@ -78,20 +78,17 @@ function ProcEm:InitDatabase()
     end
 end
 
--- Safe sound playback that can temporarily force SFX on and volume to a desired level
+-- Safe sound playback that can temporarily force volume to a desired level (1.12/Turtle)
 function ProcEm:PlayProcSound(soundNum)
     local path = "Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3"
     if ProcEmDB and ProcEmDB.soundForce then
-        local oldSFX = GetCVar("Sound_EnableSFX")
         local oldVol = GetCVar("SoundVolume")
         local desired = ProcEmDB.soundVolume or 1.0
         if desired < 0 then desired = 0 end
         if desired > 1 then desired = 1 end
-        SetCVar("Sound_EnableSFX", "1")
         SetCVar("SoundVolume", tostring(desired))
         PlaySoundFile(path)
         SetCVar("SoundVolume", oldVol)
-        SetCVar("Sound_EnableSFX", oldSFX)
     else
         PlaySoundFile(path)
     end
