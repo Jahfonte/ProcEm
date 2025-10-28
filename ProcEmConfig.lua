@@ -3,6 +3,31 @@ local getn = table.getn
 ProcEm.configRows = {}
 ProcEm.MAX_TRACKED_PROCS = 10
 ProcEm.trackedProcs = {}
+ProcEm.headersCreated = false
+
+function ProcEm:CreateConfigHeaders()
+    if ProcEm.headersCreated then
+        return
+    end
+
+    local procLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    procLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 80, -35)
+    procLabel:SetText("|cffffffffProc|r")
+
+    local enableLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    enableLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 228, -35)
+    enableLabel:SetText("|cff00ff00On|r")
+
+    local soundLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    soundLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 260, -35)
+    soundLabel:SetText("|cffffff00Snd|r")
+
+    local numLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    numLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 292, -35)
+    numLabel:SetText("|cff88aaff#|r")
+
+    ProcEm.headersCreated = true
+end
 
 function ProcEm:GetAvailableProcs()
     local available = {}
@@ -340,6 +365,8 @@ function ProcEm:RefreshConfigUI()
     if not ProcEmConfigFrame or not ProcEmConfigFrame:IsVisible() then
         return
     end
+
+    ProcEm:CreateConfigHeaders()
 
     if getn(ProcEm.configRows) == 0 then
         for i = 1, ProcEm.MAX_TRACKED_PROCS do

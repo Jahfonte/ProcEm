@@ -78,6 +78,11 @@
                     </Offset>
                 </Anchor>
             </Anchors>
+            <Scripts>
+                <OnClick>
+                    ProcEmFrame:Hide()
+                </OnClick>
+            </Scripts>
         </Button>
 
         <Button name="$parent_ResetButton" inherits="GameMenuButtonTemplate" text="Reset">
@@ -187,6 +192,11 @@
                     </Offset>
                 </Anchor>
             </Anchors>
+            <Scripts>
+                <OnClick>
+                    ProcEmConfigFrame:Hide()
+                </OnClick>
+            </Scripts>
         </Button>
 
         <Button name="$parent_ResizeButton">
