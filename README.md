@@ -15,13 +15,14 @@ Simple, clean proc tracker with custom sound support.
 ## Config Window Layout
 
 ```
-[Proc Dropdown ▼] [Enable ☑] [Sound ☑] [Sound# ▼]
+[Proc Dropdown ▼] [Enable ☑] [Sound ☑] [Sound# ▼] [Test]
 ```
 
 - **Proc Dropdown**: Click to select which proc to track
 - **Enable Checkbox**: Enable/disable tracking for this proc
 - **Sound Checkbox**: Enable/disable sound for this proc
 - **Sound Dropdown**: Choose sound 1-5
+- **Test Button**: Preview the selected sound
 
 ## Custom Sounds
 
