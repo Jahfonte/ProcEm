@@ -18,12 +18,16 @@ function ProcEm:CreateConfigHeaders()
     enableLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 228, -35)
     enableLabel:SetText("|cff00ff00On|r")
 
+    local msgLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    msgLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 260, -35)
+    msgLabel:SetText("|cff88ff88Msg|r")
+
     local soundLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    soundLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 260, -35)
+    soundLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 292, -35)
     soundLabel:SetText("|cffffff00Snd|r")
 
     local numLabel = ProcEmConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    numLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 292, -35)
+    numLabel:SetPoint("TOPLEFT", ProcEmConfigFrame, "TOPLEFT", 324, -35)
     numLabel:SetText("|cff88aaff#|r")
 
     ProcEm.headersCreated = true
@@ -91,10 +95,23 @@ function ProcEm:CreateConfigRow(index)
         end
     end)
 
+    local msgCheck = CreateFrame("CheckButton", "ProcEmConfigMsgCheck"..tostring(index), ProcEmConfigFrame, "UICheckButtonTemplate")
+    msgCheck:SetWidth(24)
+    msgCheck:SetHeight(24)
+    msgCheck:SetPoint("LEFT", enableCheck, "RIGHT", 8, 0)
+    msgCheck:SetScript("OnClick", function()
+        local procName = ProcEm.trackedProcs[index]
+        if procName then
+            if not ProcEmDB.procChat then ProcEmDB.procChat = {} end
+            if not ProcEmDB.procChat[procName] then ProcEmDB.procChat[procName] = {} end
+            ProcEmDB.procChat[procName].enabled = (this:GetChecked() == 1)
+        end
+    end)
+
     local soundCheck = CreateFrame("CheckButton", "ProcEmConfigSoundCheck"..tostring(index), ProcEmConfigFrame, "UICheckButtonTemplate")
     soundCheck:SetWidth(24)
     soundCheck:SetHeight(24)
-    soundCheck:SetPoint("LEFT", enableCheck, "RIGHT", 8, 0)
+    soundCheck:SetPoint("LEFT", msgCheck, "RIGHT", 8, 0)
     soundCheck:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
         if procName then
@@ -147,11 +164,23 @@ function ProcEm:CreateConfigRow(index)
     testButton:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
         if procName then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+            local chatOk = true
+            if ProcEmDB and ProcEmDB.procChat and ProcEmDB.procChat[procName] then
+                if ProcEmDB.procChat[procName].enabled ~= nil then
+                    chatOk = ProcEmDB.procChat[procName].enabled
+                end
+            end
+            if chatOk then
+                DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+            end
             if ProcEmDB.soundEnabled and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
                 if ProcEmDB.procSounds[procName].enabled then
                     local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
-                    PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+                    if ProcEm and ProcEm.PlayProcSound then
+                        ProcEm:PlayProcSound(soundNum)
+                    else
+                        PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+                    end
                 end
             end
         end
@@ -160,6 +189,7 @@ function ProcEm:CreateConfigRow(index)
     return {
         dropdown = dropdown,
         enableCheck = enableCheck,
+        msgCheck = msgCheck,
         soundCheck = soundCheck,
         soundDropdown = soundDropdown,
         testButton = testButton,
@@ -402,6 +432,14 @@ function ProcEm:RefreshConfigUI()
             row.enableCheck:SetChecked(proc.enabled)
             row.enableCheck:Show()
 
+            -- Chat toggle
+            if not ProcEmDB.procChat then ProcEmDB.procChat = {} end
+            if not ProcEmDB.procChat[procName] then ProcEmDB.procChat[procName] = {} end
+            local chatEnabled = ProcEmDB.procChat[procName].enabled
+            if chatEnabled == nil then chatEnabled = true end -- default to true for backward compatibility
+            row.msgCheck:SetChecked(chatEnabled)
+            row.msgCheck:Show()
+
             if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
                 row.soundCheck:SetChecked(ProcEmDB.procSounds[procName].enabled)
                 if ProcEmDB.procSounds[procName].soundNum then
@@ -420,6 +458,7 @@ function ProcEm:RefreshConfigUI()
         else
             row.text:SetText("Click to select...")
             row.enableCheck:Hide()
+            if row.msgCheck then row.msgCheck:Hide() end
             row.soundCheck:Hide()
             row.soundDropdown:Hide()
             row.testButton:Hide()
@@ -508,12 +547,21 @@ function ProcEm:InitDisplay()
     end
 
     if ProcEmDB.displayAlpha then
-        ProcEmFrame:SetAlpha(ProcEmDB.displayAlpha)
+        if ProcEm and ProcEm.SetBackgroundAlpha then
+            ProcEm:SetBackgroundAlpha(ProcEmDB.displayAlpha)
+        else
+            -- Fallback
+            ProcEmFrame:SetBackdropColor(1, 1, 1, ProcEmDB.displayAlpha)
+        end
     end
 
     if ProcEmDB.configSize and ProcEmConfigFrame then
-        ProcEmConfigFrame:SetWidth(ProcEmDB.configSize[1])
-        ProcEmConfigFrame:SetHeight(ProcEmDB.configSize[2])
+        local w = ProcEmDB.configSize[1] or 520
+        local h = ProcEmDB.configSize[2] or 500
+        if w < 520 then w = 520 end
+        if h < 450 then h = 450 end
+        ProcEmConfigFrame:SetWidth(w)
+        ProcEmConfigFrame:SetHeight(h)
     end
 
     if ProcEmConfigFrame_AlphaSlider then

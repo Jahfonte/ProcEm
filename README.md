@@ -16,11 +16,12 @@ Simple, clean proc tracker with custom sound support.
 ## Config Window Layout
 
 ```
-[Proc Dropdown ▼] [Enable ☑] [Sound ☑] [Sound# ▼] [Test]
+[Proc Dropdown ⏷] [On ☑] [Msg ☑] [Snd ☑] [# ⏷] [Test]
 ```
 
 - **Proc Dropdown**: Click to select which proc to track
-- **Enable Checkbox**: Enable/disable tracking for this proc
+- **Enable Checkbox (On)**: Enable/disable tracking for this proc
+- **Msg Checkbox**: Enable/disable chat message for this proc
 - **Sound Checkbox**: Enable/disable sound for this proc
 - **Sound Dropdown**: Choose sound 1-5
 - **Test Button**: Preview the selected sound
@@ -45,6 +46,8 @@ Each proc can use a different sound (1-5).
 - `/procem show` - Show proc tracker
 - `/procem hide` - Hide proc tracker
 - `/procem toggle` - Enable/disable tracking
+- `/procem soundforce` - Toggle force SFX+volume for alerts
+- `/procem soundvol <0..1>` - Set forced alert volume
 - `/procem reset` - Reset session counters
 - `/procem lock` - Lock window position
 - `/procem unlock` - Unlock window position

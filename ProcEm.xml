@@ -165,7 +165,7 @@
     <!-- Config Frame -->
     <Frame name="ProcEmConfigFrame" parent="UIParent" toplevel="true" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="400" y="450"/>
+            <AbsDimension x="520" y="450"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -228,9 +228,11 @@
                     </OnLoad>
                     <OnValueChanged>
                         local alpha = arg1 / 100
-                        ProcEmDB.displayAlpha = alpha
-                        if ProcEmFrame then
-                            ProcEmFrame:SetAlpha(alpha)
+                        if ProcEm and ProcEm.SetBackgroundAlpha then
+                            ProcEm:SetBackgroundAlpha(alpha)
+                        else
+                            ProcEmDB.displayAlpha = alpha
+                            if ProcEmFrame then ProcEmFrame:SetBackdropColor(1,1,1,alpha) end
                         end
                         getglobal(this:GetName().."Text"):SetText("Transparency: " .. tostring(arg1) .. "%")
                     </OnValueChanged>

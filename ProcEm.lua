@@ -17,6 +17,8 @@ ProcEm.enabled = true
 ProcEm.defaultDB = {
     enabled = true,
     soundEnabled = true,
+    soundVolume = 1.0,        -- 0.0 - 1.0 for forced playback
+    soundForce = true,        -- temporarily force SFX on + volume during playback
     targetDebuffCooldown = 1.5,
     displayLocked = false,
     displayAlpha = 1.0,
@@ -26,7 +28,7 @@ ProcEm.defaultDB = {
         y = 0,
     },
     displaySize = {250, 300},
-    configSize = {360, 450},
+    configSize = {520, 500},
     trackedProcs = {},
     procSounds = {},
     customProcs = {},
@@ -72,6 +74,36 @@ function ProcEm:InitDatabase()
             if settings.enabled ~= nil then
                 ProcEmData.Procs[procName].enabled = settings.enabled
             end
+        end
+    end
+end
+
+-- Safe sound playback that can temporarily force SFX on and volume to a desired level
+function ProcEm:PlayProcSound(soundNum)
+    local path = "Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3"
+    if ProcEmDB and ProcEmDB.soundForce then
+        local oldSFX = GetCVar("Sound_EnableSFX")
+        local oldVol = GetCVar("SoundVolume")
+        local desired = ProcEmDB.soundVolume or 1.0
+        if desired < 0 then desired = 0 end
+        if desired > 1 then desired = 1 end
+        SetCVar("Sound_EnableSFX", "1")
+        SetCVar("SoundVolume", tostring(desired))
+        PlaySoundFile(path)
+        SetCVar("SoundVolume", oldVol)
+        SetCVar("Sound_EnableSFX", oldSFX)
+    else
+        PlaySoundFile(path)
+    end
+end
+
+-- Set only the background alpha of the main display (keep text fully visible)
+function ProcEm:SetBackgroundAlpha(alpha)
+    ProcEmDB.displayAlpha = alpha
+    if ProcEmFrame and ProcEmFrame.SetBackdropColor then
+        ProcEmFrame:SetBackdropColor(1, 1, 1, alpha)
+        if ProcEmFrame.SetBackdropBorderColor then
+            ProcEmFrame:SetBackdropBorderColor(1, 1, 1, 1)
         end
     end
 end
@@ -155,12 +187,20 @@ function ProcEm:RecordProc(procName)
     if ProcEmDB.soundEnabled and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
         if ProcEmDB.procSounds[procName].enabled and ProcEmDB.procSounds[procName].soundNum then
             local soundNum = ProcEmDB.procSounds[procName].soundNum
-            PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+            self:PlayProcSound(soundNum)
         end
     end
 
     -- Chat notification
-    DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+    local chatOk = true
+    if ProcEmDB and ProcEmDB.procChat then
+        if ProcEmDB.procChat[procName] and ProcEmDB.procChat[procName].enabled ~= nil then
+            chatOk = ProcEmDB.procChat[procName].enabled
+        end
+    end
+    if chatOk then
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+    end
 
     -- Update display
     if ProcEmFrame and ProcEmFrame:IsVisible() then
@@ -367,11 +407,31 @@ function ProcEm:SlashCommand(msg)
             end
         end
 
+    elseif string.sub(msg, 1, 8) == "soundvol" then
+        local arg = string.gsub(msg, "^soundvol%s*", "")
+        if arg == "" then
+            self:Print("Sound volume: " .. tostring(ProcEmDB.soundVolume or 1.0))
+        else
+            local vol = tonumber(arg)
+            if vol and vol >= 0 and vol <= 1 then
+                ProcEmDB.soundVolume = vol
+                self:Print("Sound volume set to " .. tostring(vol))
+            else
+                self:Print("Invalid value. Usage: /procem soundvol <0..1>")
+            end
+        end
+
+    elseif msg == "soundforce" then
+        ProcEmDB.soundForce = not ProcEmDB.soundForce
+        self:Print("Sound force is now " .. (ProcEmDB.soundForce and "|cff00ff00ON|r" or "|cffff0000OFF|r"))
+
     else
         self:Print("Commands:")
         self:Print("  /procem - Open configuration")
         self:Print("  /procem toggle - Enable/disable tracking")
         self:Print("  /procem sound - Toggle sound notifications")
+        self:Print("  /procem soundforce - Toggle force SFX+volume for alerts")
+        self:Print("  /procem soundvol <0..1> - Set forced alert volume")
         self:Print("  /procem reset - Reset session counters")
         self:Print("  /procem show/hide - Show/hide display")
         self:Print("  /procem lock/unlock - Lock/unlock display position")
