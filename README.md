@@ -7,6 +7,7 @@ Simple, clean proc tracker with custom sound support.
 - **Dropdown Selection**: Choose up to 10 procs to track
 - **Enable/Disable**: Check/uncheck to toggle tracking
 - **Custom Sounds**: Assign sounds 1-5 to each proc
+- **Chat Notifications**: Shows "PROC'D: Nightfall" in chat window
 - **Resizable Windows**: Drag corners to resize
 - **Transparency Control**: Slider to adjust window opacity
 - **Boss Tracking**: Auto-detects bosses, tracks procs per boss
