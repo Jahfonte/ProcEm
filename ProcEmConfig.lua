@@ -114,11 +114,25 @@ function ProcEm:CreateConfigRow(index)
     end)
     soundDropdown.button = soundButton
 
+    local testButton = CreateFrame("Button", "ProcEmConfigTestButton"..tostring(index), ProcEmConfigFrame, "GameMenuButtonTemplate")
+    testButton:SetWidth(40)
+    testButton:SetHeight(22)
+    testButton:SetPoint("LEFT", soundDropdown, "RIGHT", 5, 0)
+    testButton:SetText("Test")
+    testButton:SetScript("OnClick", function()
+        local procName = ProcEm.trackedProcs[index]
+        if procName and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
+            local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
+            PlaySoundFile("Interface\\AddOns\\ProcEm\\" .. tostring(soundNum) .. ".mp3")
+        end
+    end)
+
     return {
         dropdown = dropdown,
         enableCheck = enableCheck,
         soundCheck = soundCheck,
         soundDropdown = soundDropdown,
+        testButton = testButton,
         text = text,
         soundText = soundText
     }
@@ -311,17 +325,20 @@ function ProcEm:RefreshConfigUI()
                 end
                 row.soundCheck:Show()
                 row.soundDropdown:Show()
+                row.testButton:Show()
             else
                 row.soundCheck:SetChecked(false)
                 row.soundText:SetText("1")
                 row.soundCheck:Show()
                 row.soundDropdown:Show()
+                row.testButton:Show()
             end
         else
             row.text:SetText("Click to select...")
             row.enableCheck:Hide()
             row.soundCheck:Hide()
             row.soundDropdown:Hide()
+            row.testButton:Hide()
         end
     end
 end
