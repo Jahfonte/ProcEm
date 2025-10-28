@@ -511,9 +511,6 @@ function ProcEm:InitDisplay()
         ProcEmConfigFrame_AlphaSlider:SetValue((ProcEmDB.displayAlpha or 1.0) * 100)
     end
 
-    if ProcEmDB.displayLocked then
-        ProcEmFrame:EnableMouse(false)
-    else
-        ProcEmFrame:EnableMouse(true)
-    end
+    -- Always keep mouse enabled for resize button
+    ProcEmFrame:EnableMouse(true)
 end
