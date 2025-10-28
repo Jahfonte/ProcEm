@@ -146,6 +146,9 @@ function ProcEm:RecordProc(procName)
         end
     end
 
+    -- Chat notification
+    DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
+
     -- Update display
     if ProcEmFrame and ProcEmFrame:IsVisible() then
         ProcEm:UpdateDisplay()
