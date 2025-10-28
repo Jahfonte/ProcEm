@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
     <!-- Main Display Frame -->
-    <Frame name="ProcEmFrame" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+    <Frame name="ProcEmFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
             <AbsDimension x="250" y="300"/>
         </Size>
@@ -19,6 +19,32 @@
                 <AbsValue val="32"/>
             </EdgeSize>
         </Backdrop>
+
+        <!-- Resize Button -->
+        <Button name="$parent_ResizeButton">
+            <Size>
+                <AbsDimension x="16" y="16"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOMRIGHT">
+                    <Offset>
+                        <AbsDimension x="-2" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnMouseDown>
+                    ProcEmFrame:StartSizing("BOTTOMRIGHT")
+                </OnMouseDown>
+                <OnMouseUp>
+                    ProcEmFrame:StopMovingOrSizing()
+                    ProcEmDB.displaySize = {ProcEmFrame:GetWidth(), ProcEmFrame:GetHeight()}
+                </OnMouseUp>
+            </Scripts>
+            <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+            <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+            <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+        </Button>
 
         <Layers>
             <Layer level="ARTWORK">
@@ -123,6 +149,8 @@
         <Scripts>
             <OnLoad>
                 this:RegisterForDrag("LeftButton")
+                this:SetMinResize(200, 150)
+                this:SetMaxResize(600, 800)
             </OnLoad>
             <OnDragStart>
                 if not ProcEmDB.displayLocked then
@@ -131,7 +159,6 @@
             </OnDragStart>
             <OnDragStop>
                 this:StopMovingOrSizing()
-                -- Save position
                 local point, _, relativePoint, xOfs, yOfs = this:GetPoint()
                 ProcEmDB.displayPosition.point = point
                 ProcEmDB.displayPosition.x = xOfs
@@ -144,9 +171,9 @@
     </Frame>
 
     <!-- Configuration Frame -->
-    <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+    <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
-            <AbsDimension x="320" y="400"/>
+            <AbsDimension x="320" y="450"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -162,6 +189,32 @@
                 <AbsValue val="32"/>
             </EdgeSize>
         </Backdrop>
+
+        <!-- Resize Button -->
+        <Button name="$parent_ResizeButton">
+            <Size>
+                <AbsDimension x="16" y="16"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOMRIGHT">
+                    <Offset>
+                        <AbsDimension x="-2" y="2"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnMouseDown>
+                    ProcEmConfigFrame:StartSizing("BOTTOMRIGHT")
+                </OnMouseDown>
+                <OnMouseUp>
+                    ProcEmConfigFrame:StopMovingOrSizing()
+                    ProcEmDB.configSize = {ProcEmConfigFrame:GetWidth(), ProcEmConfigFrame:GetHeight()}
+                </OnMouseUp>
+            </Scripts>
+            <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+            <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+            <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+        </Button>
 
         <Layers>
             <Layer level="ARTWORK">
@@ -208,9 +261,42 @@
             </Scripts>
         </ScrollFrame>
 
+        <!-- Transparency Slider -->
+        <Slider name="$parent_AlphaSlider" inherits="OptionsSliderTemplate">
+            <Size>
+                <AbsDimension x="180" y="16"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOM">
+                    <Offset>
+                        <AbsDimension x="0" y="35"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnLoad>
+                    getglobal(this:GetName().."Low"):SetText("0%")
+                    getglobal(this:GetName().."High"):SetText("100%")
+                    getglobal(this:GetName().."Text"):SetText("Transparency")
+                    this:SetMinMaxValues(0, 100)
+                    this:SetValueStep(5)
+                </OnLoad>
+                <OnValueChanged>
+                    local alpha = arg1 / 100
+                    ProcEmDB.displayAlpha = alpha
+                    if ProcEmFrame then
+                        ProcEmFrame:SetAlpha(alpha)
+                    end
+                    getglobal(this:GetName().."Text"):SetText("Transparency: " .. tostring(arg1) .. "%")
+                </OnValueChanged>
+            </Scripts>
+        </Slider>
+
         <Scripts>
             <OnLoad>
                 this:RegisterForDrag("LeftButton")
+                this:SetMinResize(280, 350)
+                this:SetMaxResize(600, 800)
             </OnLoad>
             <OnDragStart>
                 this:StartMoving()

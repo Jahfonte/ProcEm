@@ -211,6 +211,28 @@ function ProcEm:InitDisplay()
         ProcEmFrame:SetPoint(pos.point, pos.x, pos.y)
     end
 
+    -- Restore saved size
+    if ProcEmDB.displaySize then
+        ProcEmFrame:SetWidth(ProcEmDB.displaySize[1])
+        ProcEmFrame:SetHeight(ProcEmDB.displaySize[2])
+    end
+
+    -- Restore saved alpha
+    if ProcEmDB.displayAlpha then
+        ProcEmFrame:SetAlpha(ProcEmDB.displayAlpha)
+    end
+
+    -- Restore config size
+    if ProcEmDB.configSize and ProcEmConfigFrame then
+        ProcEmConfigFrame:SetWidth(ProcEmDB.configSize[1])
+        ProcEmConfigFrame:SetHeight(ProcEmDB.configSize[2])
+    end
+
+    -- Set transparency slider value
+    if ProcEmConfigFrame_AlphaSlider then
+        ProcEmConfigFrame_AlphaSlider:SetValue((ProcEmDB.displayAlpha or 1.0) * 100)
+    end
+
     -- Set locked state
     if ProcEmDB.displayLocked then
         ProcEmFrame:EnableMouse(false)

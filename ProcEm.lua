@@ -18,11 +18,14 @@ ProcEm.defaultDB = {
     enabled = true,
     soundEnabled = true,
     displayLocked = false,
+    displayAlpha = 1.0,
     displayPosition = {
         point = "CENTER",
         x = 0,
         y = 0,
     },
+    displaySize = {250, 300},
+    configSize = {320, 450},
     customProcs = {},
     bossStats = {},
 }
