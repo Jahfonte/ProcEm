@@ -235,6 +235,12 @@ function ProcEm:SelectSound(rowIndex, soundNum)
             ProcEmDB.procSounds[procName] = {}
         end
         ProcEmDB.procSounds[procName].soundNum = soundNum
+
+        -- Update the text immediately
+        if ProcEm.configRows[rowIndex] and ProcEm.configRows[rowIndex].soundText then
+            ProcEm.configRows[rowIndex].soundText:SetText(tostring(soundNum))
+        end
+
         ProcEm:RefreshConfigUI()
     end
 end

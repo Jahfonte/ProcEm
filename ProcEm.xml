@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
     <!-- Main Display Frame -->
-    <Frame name="ProcEmFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
+    <Frame name="ProcEmFrame" parent="UIParent" toplevel="true" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
             <AbsDimension x="250" y="280"/>
         </Size>
@@ -45,86 +45,98 @@
             </Layer>
         </Layers>
 
-        <Button name="$parent_ResizeButton">
-            <Size>
-                <AbsDimension x="16" y="16"/>
-            </Size>
-            <Anchors>
-                <Anchor point="BOTTOMRIGHT">
-                    <Offset>
-                        <AbsDimension x="-2" y="2"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnMouseDown>
-                    ProcEmFrame:StartSizing("BOTTOMRIGHT")
-                </OnMouseDown>
-                <OnMouseUp>
-                    ProcEmFrame:StopMovingOrSizing()
-                    ProcEmDB.displaySize = {ProcEmFrame:GetWidth(), ProcEmFrame:GetHeight()}
-                </OnMouseUp>
-            </Scripts>
-            <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
-            <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
-            <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
-        </Button>
+        <Frames>
+            <Button name="$parentClose" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-5" y="-5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
 
-        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
-            <Anchors>
-                <Anchor point="TOPRIGHT" relativeTo="$parent">
-                    <Offset>
-                        <AbsDimension x="-5" y="-5"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    ProcEmFrame:Hide()
-                </OnClick>
-            </Scripts>
-        </Button>
+            <Button name="$parentResetButton" inherits="GameMenuButtonTemplate" text="Reset">
+                <Size>
+                    <AbsDimension x="70" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="8"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        ProcEm:InitSessionProcs()
+                        ProcEm:UpdateDisplay()
+                        ProcEm:Print("Counters reset")
+                    </OnClick>
+                </Scripts>
+            </Button>
 
-        <Button name="$parent_ResetButton" inherits="GameMenuButtonTemplate" text="Reset">
-            <Size>
-                <AbsDimension x="70" y="22"/>
-            </Size>
-            <Anchors>
-                <Anchor point="BOTTOM">
-                    <Offset>
-                        <AbsDimension x="0" y="8"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    ProcEm:InitSessionProcs()
-                    ProcEm:UpdateDisplay()
-                    ProcEm:Print("Counters reset")
-                </OnClick>
-            </Scripts>
-        </Button>
+            <Button name="$parentConfigButton" inherits="GameMenuButtonTemplate" text="Config">
+                <Size>
+                    <AbsDimension x="70" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-12" y="8"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if ProcEmConfigFrame then
+                            ProcEmConfigFrame:Show()
+                            ProcEm:RefreshConfigUI()
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
 
-        <Button name="$parent_ConfigButton" inherits="GameMenuButtonTemplate" text="Config">
-            <Size>
-                <AbsDimension x="70" y="22"/>
-            </Size>
-            <Anchors>
-                <Anchor point="BOTTOMRIGHT">
-                    <Offset>
-                        <AbsDimension x="-12" y="8"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    if ProcEmConfigFrame then
-                        ProcEmConfigFrame:Show()
-                        ProcEm:RefreshConfigUI()
-                    end
-                </OnClick>
-            </Scripts>
-        </Button>
+            <Frame name="$parentResizeGrip" enableMouse="true">
+                <Size>
+                    <AbsDimension x="16" y="16"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-2" y="2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentTexture" file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up">
+                            <Size>
+                                <AbsDimension x="16" y="16"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnMouseDown>
+                        ProcEmFrame:StartSizing("BOTTOMRIGHT")
+                    </OnMouseDown>
+                    <OnMouseUp>
+                        ProcEmFrame:StopMovingOrSizing()
+                        ProcEmDB.displaySize = {ProcEmFrame:GetWidth(), ProcEmFrame:GetHeight()}
+                    </OnMouseUp>
+                    <OnEnter>
+                        getglobal(this:GetName().."Texture"):SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+                    </OnEnter>
+                    <OnLeave>
+                        getglobal(this:GetName().."Texture"):SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+                    </OnLeave>
+                </Scripts>
+            </Frame>
+        </Frames>
 
         <Scripts>
             <OnLoad>
@@ -151,7 +163,7 @@
     </Frame>
 
     <!-- Config Frame -->
-    <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" resizable="true" enableMouse="true" hidden="true">
+    <Frame name="ProcEmConfigFrame" parent="UIParent" toplevel="true" movable="true" resizable="true" enableMouse="true" hidden="true">
         <Size>
             <AbsDimension x="400" y="450"/>
         </Size>
@@ -184,75 +196,87 @@
             </Layer>
         </Layers>
 
-        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
-            <Anchors>
-                <Anchor point="TOPRIGHT" relativeTo="$parent">
-                    <Offset>
-                        <AbsDimension x="-5" y="-5"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnClick>
-                    ProcEmConfigFrame:Hide()
-                </OnClick>
-            </Scripts>
-        </Button>
+        <Frames>
+            <Button name="$parentClose" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-5" y="-5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
 
-        <Button name="$parent_ResizeButton">
-            <Size>
-                <AbsDimension x="16" y="16"/>
-            </Size>
-            <Anchors>
-                <Anchor point="BOTTOMRIGHT">
-                    <Offset>
-                        <AbsDimension x="-2" y="42"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnMouseDown>
-                    ProcEmConfigFrame:StartSizing("BOTTOMRIGHT")
-                </OnMouseDown>
-                <OnMouseUp>
-                    ProcEmConfigFrame:StopMovingOrSizing()
-                    ProcEmDB.configSize = {ProcEmConfigFrame:GetWidth(), ProcEmConfigFrame:GetHeight()}
-                </OnMouseUp>
-            </Scripts>
-            <NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
-            <HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
-            <PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
-        </Button>
+            <Slider name="$parent_AlphaSlider" inherits="OptionsSliderTemplate">
+                <Size>
+                    <AbsDimension x="200" y="16"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="-10" y="35"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        getglobal(this:GetName().."Low"):SetText("0%")
+                        getglobal(this:GetName().."High"):SetText("100%")
+                        getglobal(this:GetName().."Text"):SetText("Transparency")
+                        this:SetMinMaxValues(0, 100)
+                        this:SetValueStep(5)
+                    </OnLoad>
+                    <OnValueChanged>
+                        local alpha = arg1 / 100
+                        ProcEmDB.displayAlpha = alpha
+                        if ProcEmFrame then
+                            ProcEmFrame:SetAlpha(alpha)
+                        end
+                        getglobal(this:GetName().."Text"):SetText("Transparency: " .. tostring(arg1) .. "%")
+                    </OnValueChanged>
+                </Scripts>
+            </Slider>
 
-        <Slider name="$parent_AlphaSlider" inherits="OptionsSliderTemplate">
-            <Size>
-                <AbsDimension x="200" y="16"/>
-            </Size>
-            <Anchors>
-                <Anchor point="BOTTOM">
-                    <Offset>
-                        <AbsDimension x="-10" y="35"/>
-                    </Offset>
-                </Anchor>
-            </Anchors>
-            <Scripts>
-                <OnLoad>
-                    getglobal(this:GetName().."Low"):SetText("0%")
-                    getglobal(this:GetName().."High"):SetText("100%")
-                    getglobal(this:GetName().."Text"):SetText("Transparency")
-                    this:SetMinMaxValues(0, 100)
-                    this:SetValueStep(5)
-                </OnLoad>
-                <OnValueChanged>
-                    local alpha = arg1 / 100
-                    ProcEmDB.displayAlpha = alpha
-                    if ProcEmFrame then
-                        ProcEmFrame:SetAlpha(alpha)
-                    end
-                    getglobal(this:GetName().."Text"):SetText("Transparency: " .. tostring(arg1) .. "%")
-                </OnValueChanged>
-            </Scripts>
-        </Slider>
+            <Frame name="$parentResizeGrip" enableMouse="true">
+                <Size>
+                    <AbsDimension x="16" y="16"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-2" y="2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentTexture" file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up">
+                            <Size>
+                                <AbsDimension x="16" y="16"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnMouseDown>
+                        ProcEmConfigFrame:StartSizing("BOTTOMRIGHT")
+                    </OnMouseDown>
+                    <OnMouseUp>
+                        ProcEmConfigFrame:StopMovingOrSizing()
+                        ProcEmDB.configSize = {ProcEmConfigFrame:GetWidth(), ProcEmConfigFrame:GetHeight()}
+                    </OnMouseUp>
+                    <OnEnter>
+                        getglobal(this:GetName().."Texture"):SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+                    </OnEnter>
+                    <OnLeave>
+                        getglobal(this:GetName().."Texture"):SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+                    </OnLeave>
+                </Scripts>
+            </Frame>
+        </Frames>
 
         <Scripts>
             <OnLoad>
