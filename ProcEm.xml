@@ -72,7 +72,7 @@
 
         <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
             <Anchors>
-                <Anchor point="TOPRIGHT">
+                <Anchor point="TOPRIGHT" relativeTo="$parent">
                     <Offset>
                         <AbsDimension x="-5" y="-5"/>
                     </Offset>
@@ -181,7 +181,7 @@
 
         <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
             <Anchors>
-                <Anchor point="TOPRIGHT">
+                <Anchor point="TOPRIGHT" relativeTo="$parent">
                     <Offset>
                         <AbsDimension x="-5" y="-5"/>
                     </Offset>

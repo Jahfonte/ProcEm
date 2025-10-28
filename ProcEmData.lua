@@ -151,6 +151,16 @@ ProcEmData.Procs = {
         sound = nil,
         enabled = true,
     },
+    ["Windfury Weapon"] = {
+        name = "Windfury Weapon",
+        category = ProcEmData.CATEGORY.ENCHANT,
+        detection = ProcEmData.DETECTION.COMBAT_LOG,
+        pattern = "You gain Windfury Attack",
+        event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+        color = {0.2, 0.6, 1},
+        sound = "LEVELUPSOUND",
+        enabled = true,
+    },
 
     -- Talent/Ability Procs
     ["Windfury Totem"] = {
