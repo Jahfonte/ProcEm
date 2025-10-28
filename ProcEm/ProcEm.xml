@@ -1,0 +1,224 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+
+    <!-- Main Display Frame -->
+    <Frame name="ProcEmFrame" parent="UIParent" movable="true" enableMouse="true" hidden="false">
+        <Size>
+            <AbsDimension x="300" y="400"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+            <BackgroundInsets>
+                <AbsInset left="11" right="12" top="12" bottom="11"/>
+            </BackgroundInsets>
+            <TileSize>
+                <AbsValue val="32"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="32"/>
+            </EdgeSize>
+        </Backdrop>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <!-- Title -->
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm - Session">
+                    <Anchors>
+                        <Anchor point="TOP" relativeTo="$parent">
+                            <Offset>
+                                <AbsDimension x="0" y="-15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <!-- Boss Name -->
+                <FontString name="$parent_BossName" inherits="GameFontNormal" text="">
+                    <Anchors>
+                        <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
+                            <Offset>
+                                <AbsDimension x="0" y="-5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <Color r="1" g="0.5" b="0"/>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <!-- Scroll Frame for proc list -->
+        <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+            <Size>
+                <AbsDimension x="260" y="320"/>
+            </Size>
+            <Anchors>
+                <Anchor point="TOP" relativeTo="$parent_BossName" relativePoint="BOTTOM">
+                    <Offset>
+                        <AbsDimension x="0" y="-10"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnVerticalScroll>
+                    FauxScrollFrame_OnVerticalScroll(16, function() ProcEm:UpdateDisplay() end)
+                </OnVerticalScroll>
+            </Scripts>
+        </ScrollFrame>
+
+        <!-- Close Button -->
+        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+            <Anchors>
+                <Anchor point="TOPRIGHT">
+                    <Offset>
+                        <AbsDimension x="-5" y="-5"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </Button>
+
+        <!-- Reset Button -->
+        <Button name="$parent_ResetButton" inherits="GameMenuButtonTemplate" text="Reset">
+            <Size>
+                <AbsDimension x="80" y="25"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOMLEFT">
+                    <Offset>
+                        <AbsDimension x="15" y="10"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnClick>
+                    ProcEm:InitSessionProcs()
+                    ProcEm:UpdateDisplay()
+                    ProcEm:Print("Session counters reset")
+                </OnClick>
+            </Scripts>
+        </Button>
+
+        <!-- Config Button -->
+        <Button name="$parent_ConfigButton" inherits="GameMenuButtonTemplate" text="Config">
+            <Size>
+                <AbsDimension x="80" y="25"/>
+            </Size>
+            <Anchors>
+                <Anchor point="BOTTOMRIGHT">
+                    <Offset>
+                        <AbsDimension x="-15" y="10"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnClick>
+                    if ProcEmConfigFrame then
+                        ProcEmConfigFrame:Show()
+                        ProcEm:RefreshConfigUI()
+                    end
+                </OnClick>
+            </Scripts>
+        </Button>
+
+        <Scripts>
+            <OnLoad>
+                this:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                if not ProcEmDB.displayLocked then
+                    this:StartMoving()
+                end
+            </OnDragStart>
+            <OnDragStop>
+                this:StopMovingOrSizing()
+                -- Save position
+                local point, _, relativePoint, xOfs, yOfs = this:GetPoint()
+                ProcEmDB.displayPosition.point = point
+                ProcEmDB.displayPosition.x = xOfs
+                ProcEmDB.displayPosition.y = yOfs
+            </OnDragStop>
+            <OnShow>
+                ProcEm:UpdateDisplay()
+            </OnShow>
+        </Scripts>
+    </Frame>
+
+    <!-- Configuration Frame -->
+    <Frame name="ProcEmConfigFrame" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+        <Size>
+            <AbsDimension x="500" y="550"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+            <BackgroundInsets>
+                <AbsInset left="11" right="12" top="12" bottom="11"/>
+            </BackgroundInsets>
+            <TileSize>
+                <AbsValue val="32"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="32"/>
+            </EdgeSize>
+        </Backdrop>
+
+        <Layers>
+            <Layer level="ARTWORK">
+                <!-- Title -->
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm Configuration">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <!-- Close Button -->
+        <Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+            <Anchors>
+                <Anchor point="TOPRIGHT">
+                    <Offset>
+                        <AbsDimension x="-5" y="-5"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </Button>
+
+        <!-- Scroll Frame for proc checkboxes -->
+        <ScrollFrame name="$parent_ScrollFrame" inherits="FauxScrollFrameTemplate">
+            <Size>
+                <AbsDimension x="460" y="450"/>
+            </Size>
+            <Anchors>
+                <Anchor point="TOP" relativeTo="$parent_Title" relativePoint="BOTTOM">
+                    <Offset>
+                        <AbsDimension x="0" y="-20"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnVerticalScroll>
+                    FauxScrollFrame_OnVerticalScroll(20, function() ProcEm:RefreshConfigUI() end)
+                </OnVerticalScroll>
+            </Scripts>
+        </ScrollFrame>
+
+        <Scripts>
+            <OnLoad>
+                this:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                this:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+                this:StopMovingOrSizing()
+            </OnDragStop>
+        </Scripts>
+    </Frame>
+
+</Ui>

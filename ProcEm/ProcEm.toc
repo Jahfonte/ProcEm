@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: |cff00ff00Proc|cffffffffEm
+## Author: Todd
+## Version: 1.0.0
+## Notes: Comprehensive weapon and ability proc tracker with boss statistics
+## SavedVariables: ProcEmDB
+## SavedVariablesPerCharacter: ProcEmCharDB
+
+ProcEmData.lua
+ProcEm.lua
+ProcEm.xml
+ProcEmConfig.lua
