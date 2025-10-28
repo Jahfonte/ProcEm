@@ -38,16 +38,16 @@ function ProcEm:CreateConfigRow(index)
     local button = CreateFrame("Button", nil, dropdown)
     button:SetWidth(200)
     button:SetHeight(25)
-    button:SetPoint("CENTER")
+    button:SetPoint("CENTER", dropdown, "CENTER")
     button:RegisterForClicks("LeftButtonUp")
     button:SetScript("OnClick", function()
         ProcEm:ShowProcSelection(index)
     end)
     dropdown.button = button
 
-    local enableCheck = CreateFrame("CheckButton", "ProcEmConfigCheck"..tostring(index), ProcEmConfigFrame, "OptionsCheckButtonTemplate")
-    enableCheck:SetWidth(20)
-    enableCheck:SetHeight(20)
+    local enableCheck = CreateFrame("CheckButton", "ProcEmConfigCheck"..tostring(index), ProcEmConfigFrame, "UICheckButtonTemplate")
+    enableCheck:SetWidth(24)
+    enableCheck:SetHeight(24)
     enableCheck:SetPoint("LEFT", dropdown, "RIGHT", 8, 0)
     enableCheck:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
@@ -66,9 +66,9 @@ function ProcEm:CreateConfigRow(index)
         end
     end)
 
-    local soundCheck = CreateFrame("CheckButton", "ProcEmConfigSoundCheck"..tostring(index), ProcEmConfigFrame, "OptionsCheckButtonTemplate")
-    soundCheck:SetWidth(20)
-    soundCheck:SetHeight(20)
+    local soundCheck = CreateFrame("CheckButton", "ProcEmConfigSoundCheck"..tostring(index), ProcEmConfigFrame, "UICheckButtonTemplate")
+    soundCheck:SetWidth(24)
+    soundCheck:SetHeight(24)
     soundCheck:SetPoint("LEFT", enableCheck, "RIGHT", 8, 0)
     soundCheck:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
@@ -99,7 +99,7 @@ function ProcEm:CreateConfigRow(index)
     })
 
     local soundText = soundDropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    soundText:SetPoint("CENTER")
+    soundText:SetPoint("CENTER", soundDropdown, "CENTER")
     soundText:SetText("1")
     soundText:SetFont("Fonts\\FRIZQT__.TTF", 9)
     soundDropdown.text = soundText
@@ -107,7 +107,7 @@ function ProcEm:CreateConfigRow(index)
     local soundButton = CreateFrame("Button", nil, soundDropdown)
     soundButton:SetWidth(60)
     soundButton:SetHeight(25)
-    soundButton:SetPoint("CENTER")
+    soundButton:SetPoint("CENTER", soundDropdown, "CENTER")
     soundButton:RegisterForClicks("LeftButtonUp")
     soundButton:SetScript("OnClick", function()
         ProcEm:ShowSoundSelection(index)
@@ -146,7 +146,7 @@ function ProcEm:ShowSoundSelection(rowIndex)
     local frame = CreateFrame("Frame", "ProcEmSoundSelectionFrame", UIParent)
     frame:SetWidth(150)
     frame:SetHeight(200)
-    frame:SetPoint("CENTER")
+    frame:SetPoint("CENTER", UIParent, "CENTER")
     frame:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
         edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -159,11 +159,11 @@ function ProcEm:ShowSoundSelection(rowIndex)
     frame.rowIndex = rowIndex
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -15)
+    title:SetPoint("TOP", frame, "TOP", 0, -15)
     title:SetText("Sound")
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
+    close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
 
     local yPos = -45
 
@@ -171,10 +171,10 @@ function ProcEm:ShowSoundSelection(rowIndex)
         local btn = CreateFrame("Button", nil, frame)
         btn:SetWidth(120)
         btn:SetHeight(20)
-        btn:SetPoint("TOP", 0, yPos)
+        btn:SetPoint("TOP", frame, "TOP", 0, yPos)
 
         local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        btnText:SetPoint("CENTER")
+        btnText:SetPoint("CENTER", btn, "CENTER")
         btnText:SetText("Sound " .. tostring(i))
 
         btn:SetScript("OnClick", function()
@@ -219,7 +219,7 @@ function ProcEm:ShowProcSelection(rowIndex)
     local frame = CreateFrame("Frame", "ProcEmSelectionFrame", UIParent)
     frame:SetWidth(200)
     frame:SetHeight(400)
-    frame:SetPoint("CENTER")
+    frame:SetPoint("CENTER", UIParent, "CENTER")
     frame:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
         edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -232,11 +232,11 @@ function ProcEm:ShowProcSelection(rowIndex)
     frame.rowIndex = rowIndex
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -15)
+    title:SetPoint("TOP", frame, "TOP", 0, -15)
     title:SetText("Select Proc")
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
+    close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
 
     local availableProcs = ProcEm:GetAvailableProcs()
     local yPos = -45
@@ -246,10 +246,10 @@ function ProcEm:ShowProcSelection(rowIndex)
         local btn = CreateFrame("Button", nil, frame)
         btn:SetWidth(180)
         btn:SetHeight(18)
-        btn:SetPoint("TOP", 0, yPos)
+        btn:SetPoint("TOP", frame, "TOP", 0, yPos)
 
         local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        btnText:SetPoint("LEFT", 5, 0)
+        btnText:SetPoint("LEFT", btn, "LEFT", 5, 0)
         btnText:SetText(procName)
         btnText:SetFont("Fonts\\FRIZQT__.TTF", 9)
 
@@ -415,7 +415,7 @@ function ProcEm:InitDisplay()
     if ProcEmDB.displayPosition then
         local pos = ProcEmDB.displayPosition
         ProcEmFrame:ClearAllPoints()
-        ProcEmFrame:SetPoint(pos.point, pos.x, pos.y)
+        ProcEmFrame:SetPoint(pos.point, UIParent, pos.point, pos.x, pos.y)
     end
 
     if ProcEmDB.displaySize then

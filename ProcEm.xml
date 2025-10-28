@@ -167,7 +167,7 @@
 
         <Layers>
             <Layer level="ARTWORK">
-                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="CONFIG WINDOW">
+                <FontString name="$parent_Title" inherits="GameFontNormalLarge" text="ProcEm Configuration">
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
