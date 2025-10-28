@@ -196,6 +196,7 @@ function ProcEm:ShowSoundSelection(rowIndex)
     local yPos = -45
 
     for i = 1, 5 do
+        local soundNum = i  -- Create local copy to avoid closure issue
         local btn = CreateFrame("Button", nil, frame)
         btn:SetWidth(120)
         btn:SetHeight(20)
@@ -203,10 +204,10 @@ function ProcEm:ShowSoundSelection(rowIndex)
 
         local btnText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         btnText:SetPoint("CENTER", btn, "CENTER")
-        btnText:SetText("Sound " .. tostring(i))
+        btnText:SetText("Sound " .. tostring(soundNum))
 
         btn:SetScript("OnClick", function()
-            ProcEm:SelectSound(rowIndex, i)
+            ProcEm:SelectSound(rowIndex, soundNum)
             frame:Hide()
         end)
 
