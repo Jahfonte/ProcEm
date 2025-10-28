@@ -17,6 +17,7 @@ ProcEm.enabled = true
 ProcEm.defaultDB = {
     enabled = true,
     soundEnabled = true,
+    targetDebuffCooldown = 1.5,
     displayLocked = false,
     displayAlpha = 1.0,
     displayPosition = {
@@ -48,6 +49,11 @@ function ProcEm:InitDatabase()
         if ProcEmDB[key] == nil then
             ProcEmDB[key] = value
         end
+    end
+
+    -- Restore enabled toggle from saved variables if present
+    if ProcEmDB.enabled ~= nil then
+        self.enabled = ProcEmDB.enabled
     end
 
     if not ProcEmCharDB then
@@ -95,8 +101,15 @@ end
 -- Initialize session proc counters
 function ProcEm:InitSessionProcs()
     self.sessionProcs = {}
+    -- Build a set of selected procs from config
+    local selected = {}
+    if ProcEmDB and ProcEmDB.trackedProcs then
+        for _, name in pairs(ProcEmDB.trackedProcs) do
+            if name then selected[name] = true end
+        end
+    end
     for procName, proc in pairs(ProcEmData.Procs) do
-        if proc.enabled then
+        if proc.enabled and selected[procName] then
             self.sessionProcs[procName] = {
                 count = 0,
                 lastProc = 0,
@@ -139,7 +152,7 @@ function ProcEm:RecordProc(procName)
     end
 
     -- Play custom sound
-    if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
+    if ProcEmDB.soundEnabled and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
         if ProcEmDB.procSounds[procName].enabled and ProcEmDB.procSounds[procName].soundNum then
             local soundNum = ProcEmDB.procSounds[procName].soundNum
             PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
@@ -163,11 +176,40 @@ function ProcEm:ParseCombatLog(event, message)
         return
     end
 
+    -- Build a set of selected procs to enforce "only track what's in config"
+    local selected = {}
+    if ProcEmDB and ProcEmDB.trackedProcs then
+        for _, name in pairs(ProcEmDB.trackedProcs) do
+            if name then selected[name] = true end
+        end
+    end
+
     -- Check each enabled proc
     for procName, proc in pairs(ProcEmData.Procs) do
-        if proc.enabled and proc.event == event then
+        if proc.enabled and proc.event == event and selected[procName] then
             if proc.pattern and S_FIND(message, proc.pattern) then
-                self:RecordProc(procName)
+                if proc.targetOnly then
+                    local currentTarget = UnitName("target")
+                    if currentTarget then
+                        local who = string.match(message, "^(.+) is afflicted by ")
+                        if who and who == currentTarget then
+                            -- Anti-spam cooldown per proc per target to avoid double alerts
+                            self.lastTargetProc = self.lastTargetProc or {}
+                            self.lastTargetProc[procName] = self.lastTargetProc[procName] or {}
+                            local now = GetTime()
+                            local last = self.lastTargetProc[procName][who] or 0
+                            local cd = (ProcEmDB and ProcEmDB.targetDebuffCooldown) or 1.5
+                            if (now - last) >= cd then
+                                self.lastTargetProc[procName][who] = now
+                                self:RecordProc(procName)
+                            else
+                                -- Suppressed due to cooldown
+                            end
+                        end
+                    end
+                else
+                    self:RecordProc(procName)
+                end
             end
         end
     end
@@ -245,7 +287,10 @@ function ProcEm:OnEvent(event)
     elseif event == "CHAT_MSG_SPELL_SELF_BUFF" or
            event == "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS" or
            event == "CHAT_MSG_SPELL_SELF_DAMAGE" or
-           event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" then
+           event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" or
+           event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" or
+           event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" or
+           event == "CHAT_MSG_SPELL_AURA_GONE_OTHER" then
         self:ParseCombatLog(event, arg1)
     end
 end
@@ -308,6 +353,20 @@ function ProcEm:SlashCommand(msg)
     elseif msg == "boss" or msg == "stats" then
         self:PrintBossStats()
 
+    elseif string.sub(msg, 1, 10) == "tdcooldown" then
+        local arg = string.gsub(msg, "^tdcooldown%s*", "")
+        if arg == "" then
+            self:Print("Target debuff cooldown: " .. tostring(ProcEmDB.targetDebuffCooldown or 1.5) .. "s")
+        else
+            local secs = tonumber(arg)
+            if secs and secs >= 0 then
+                ProcEmDB.targetDebuffCooldown = secs
+                self:Print("Target debuff cooldown set to " .. tostring(secs) .. "s")
+            else
+                self:Print("Invalid value. Usage: /procem tdcooldown <seconds>")
+            end
+        end
+
     else
         self:Print("Commands:")
         self:Print("  /procem - Open configuration")
@@ -317,6 +376,7 @@ function ProcEm:SlashCommand(msg)
         self:Print("  /procem show/hide - Show/hide display")
         self:Print("  /procem lock/unlock - Lock/unlock display position")
         self:Print("  /procem boss - Show boss statistics")
+        self:Print("  /procem tdcooldown <seconds> - Target-debuff alert cooldown")
     end
 end
 
@@ -348,6 +408,9 @@ ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_SELF_BUFF")
 ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS")
 ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
 ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
+ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
+ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
+ProcEm.eventFrame:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
 
 ProcEm.eventFrame:SetScript("OnEvent", function()
     ProcEm:OnEvent(event)

@@ -49,6 +49,7 @@ Each proc can use a different sound (1-5).
 - `/procem lock` - Lock window position
 - `/procem unlock` - Unlock window position
 - `/procem boss` - Show boss statistics
+ - `/procem tdcooldown <seconds>` - Target-debuff alert cooldown
 
 ## Usage
 

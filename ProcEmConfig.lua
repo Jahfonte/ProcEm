@@ -148,9 +148,11 @@ function ProcEm:CreateConfigRow(index)
         local procName = ProcEm.trackedProcs[index]
         if procName then
             DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00PROC'D:|r " .. tostring(procName))
-            if ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
-                local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
-                PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+            if ProcEmDB.soundEnabled and ProcEmDB.procSounds and ProcEmDB.procSounds[procName] then
+                if ProcEmDB.procSounds[procName].enabled then
+                    local soundNum = ProcEmDB.procSounds[procName].soundNum or 1
+                    PlaySoundFile("Interface\\AddOns\\ProcEm\\sound\\" .. tostring(soundNum) .. ".mp3")
+                end
             end
         end
     end)

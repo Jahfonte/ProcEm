@@ -23,11 +23,11 @@ ProcEmData.Procs = {
         name = "Nightfall",
         category = ProcEmData.CATEGORY.WEAPON,
         detection = ProcEmData.DETECTION.COMBAT_LOG,
-        pattern = "You gain Spell Vulnerability",
-        event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
+        pattern = ".* is afflicted by Spell Vulnerability",
+        event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+        targetOnly = true,
         color = {0.5, 0, 0.8},
-        sound = "LevelUp",
-        enabled = true,
+        enabled = false,
     },
     ["Hand of Justice"] = {
         name = "Hand of Justice",
@@ -36,8 +36,7 @@ ProcEmData.Procs = {
         pattern = "You gain 1 extra attack",
         event = "CHAT_MSG_SPELL_SELF_BUFF",
         color = {1, 0.8, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Ironfoe"] = {
         name = "Ironfoe",
@@ -46,8 +45,7 @@ ProcEmData.Procs = {
         pattern = "You gain 2 extra attacks",
         event = "CHAT_MSG_SPELL_SELF_BUFF",
         color = {0.7, 0.7, 0.7},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Thrash Blade"] = {
         name = "Thrash Blade",
@@ -56,8 +54,7 @@ ProcEmData.Procs = {
         pattern = "You gain Thrash Blade",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {0.8, 0.2, 0.2},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Eskhandar's Right Claw"] = {
         name = "Eskhandar's Right Claw",
@@ -66,8 +63,7 @@ ProcEmData.Procs = {
         pattern = "You gain Eskhandar's Rage",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {0, 1, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Flurry Axe"] = {
         name = "Flurry Axe",
@@ -76,28 +72,27 @@ ProcEmData.Procs = {
         pattern = "You gain Flurry",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {0.2, 0.8, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Bonereaver's Edge"] = {
         name = "Bonereaver's Edge",
         category = ProcEmData.CATEGORY.WEAPON,
         detection = ProcEmData.DETECTION.COMBAT_LOG,
         pattern = ".* is afflicted by Bonereaver's Edge",
-        event = "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
+        event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+        targetOnly = true,
         color = {0.6, 0.3, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Thunderfury"] = {
         name = "Thunderfury",
         category = ProcEmData.CATEGORY.WEAPON,
         detection = ProcEmData.DETECTION.COMBAT_LOG,
         pattern = ".* is afflicted by Thunderfury",
-        event = "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
+        event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+        targetOnly = true,
         color = {0, 0.5, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Deathbringer"] = {
         name = "Deathbringer",
@@ -106,8 +101,7 @@ ProcEmData.Procs = {
         pattern = "Deathbringer",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {0.4, 0, 0.4},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Sulfuras"] = {
         name = "Sulfuras",
@@ -116,8 +110,7 @@ ProcEmData.Procs = {
         pattern = "Sulfuras",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {1, 0.4, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
 
     -- Enchant Procs
@@ -128,8 +121,7 @@ ProcEmData.Procs = {
         pattern = "You gain Crusader",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {1, 0.9, 0.3},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Lifestealing"] = {
         name = "Lifestealing",
@@ -138,8 +130,7 @@ ProcEmData.Procs = {
         pattern = "Lifestealing",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {0.5, 0, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Fiery Weapon"] = {
         name = "Fiery Weapon",
@@ -148,18 +139,16 @@ ProcEmData.Procs = {
         pattern = "Fiery Weapon",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {1, 0.3, 0},
-        sound = nil,
-        enabled = true,
+        enabled = false,
     },
     ["Windfury Weapon"] = {
         name = "Windfury Weapon",
         category = ProcEmData.CATEGORY.ENCHANT,
         detection = ProcEmData.DETECTION.COMBAT_LOG,
-        pattern = "You gain Windfury Attack",
+        pattern = "You gain Windfury Weapon",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {0.2, 0.6, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
 
     -- Talent/Ability Procs
@@ -170,8 +159,7 @@ ProcEmData.Procs = {
         pattern = "You gain 1 extra attack through Windfury",
         event = "CHAT_MSG_SPELL_SELF_BUFF",
         color = {0.3, 0.7, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Sword Specialization"] = {
         name = "Sword Specialization",
@@ -180,8 +168,7 @@ ProcEmData.Procs = {
         pattern = "You gain 1 extra attack",
         event = "CHAT_MSG_SPELL_SELF_BUFF",
         color = {0.8, 0.8, 0.8},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Mace Specialization"] = {
         name = "Mace Specialization",
@@ -190,7 +177,6 @@ ProcEmData.Procs = {
         pattern = ".* is stunned",
         event = "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
         color = {0.6, 0.4, 0.2},
-        sound = "LEVELUPSOUND",
         enabled = false, -- Can be noisy
     },
     ["Flurry"] = {
@@ -200,7 +186,6 @@ ProcEmData.Procs = {
         pattern = "You gain Flurry",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {1, 0.5, 0.5},
-        sound = nil,
         enabled = false, -- Can be very frequent
     },
     ["Enrage"] = {
@@ -210,8 +195,7 @@ ProcEmData.Procs = {
         pattern = "You are Enraged",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {1, 0, 0},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Reckoning"] = {
         name = "Reckoning",
@@ -220,8 +204,7 @@ ProcEmData.Procs = {
         pattern = "You gain Reckoning",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {1, 0.8, 0.4},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Seal of Command"] = {
         name = "Seal of Command",
@@ -230,7 +213,6 @@ ProcEmData.Procs = {
         pattern = "Your Seal of Command",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {1, 0.9, 0.5},
-        sound = nil,
         enabled = false, -- Very frequent
     },
     ["Clearcasting"] = {
@@ -240,8 +222,7 @@ ProcEmData.Procs = {
         pattern = "You gain Clearcasting",
         event = "CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS",
         color = {0.5, 0.5, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Impact"] = {
         name = "Impact",
@@ -250,8 +231,7 @@ ProcEmData.Procs = {
         pattern = ".* is stunned by your Impact",
         event = "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE",
         color = {0.8, 0.4, 1},
-        sound = "LEVELUPSOUND",
-        enabled = true,
+        enabled = false,
     },
     ["Overpower"] = {
         name = "Overpower",
@@ -260,7 +240,6 @@ ProcEmData.Procs = {
         pattern = "Your Overpower",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {1, 0.6, 0},
-        sound = "LEVELUPSOUND",
         enabled = false, -- Track usage not proc
     },
     ["Revenge"] = {
@@ -270,9 +249,120 @@ ProcEmData.Procs = {
         pattern = "Your Revenge",
         event = "CHAT_MSG_SPELL_SELF_DAMAGE",
         color = {0.8, 0, 0},
-        sound = nil,
         enabled = false, -- Track usage not proc
     },
+}
+
+-- Additional target debuffs (handled via periodic creature damage; gated to current target)
+-- Disabled by default to reduce noise; enable as needed from UI.
+ProcEmData.Procs["Shadow Weaving"] = {
+    name = "Shadow Weaving",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Shadow Weaving",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.4, 0, 0.6},
+    enabled = false,
+}
+
+ProcEmData.Procs["Curse of Shadows"] = {
+    name = "Curse of Shadows",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Curse of Shadows",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.6, 0, 0.6},
+    enabled = false,
+}
+
+ProcEmData.Procs["Curse of Elements"] = {
+    name = "Curse of Elements",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Curse of Elements",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.2, 0.7, 0.9},
+    enabled = false,
+}
+
+ProcEmData.Procs["Curse of Weakness"] = {
+    name = "Curse of Weakness",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Curse of Weakness",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.5, 0.5, 0.5},
+    enabled = false,
+}
+
+ProcEmData.Procs["Sunder Armor"] = {
+    name = "Sunder Armor",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Sunder Armor",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.7, 0.4, 0.2},
+    enabled = false,
+}
+
+ProcEmData.Procs["Expose Armor"] = {
+    name = "Expose Armor",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Expose Armor",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.8, 0.7, 0.2},
+    enabled = false,
+}
+
+ProcEmData.Procs["Faerie Fire"] = {
+    name = "Faerie Fire",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Faerie Fire",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.1, 1, 0.5},
+    enabled = false,
+}
+
+ProcEmData.Procs["Winter's Chill"] = {
+    name = "Winter's Chill",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Winter's Chill",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.6, 0.8, 1},
+    enabled = false,
+}
+
+ProcEmData.Procs["Ignite"] = {
+    name = "Ignite",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Ignite",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {1, 0.3, 0},
+    enabled = false,
+}
+
+ProcEmData.Procs["Insect Swarm"] = {
+    name = "Insect Swarm",
+    category = ProcEmData.CATEGORY.ABILITY,
+    detection = ProcEmData.DETECTION.COMBAT_LOG,
+    pattern = ".* is afflicted by Insect Swarm",
+    event = "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE",
+    targetOnly = true,
+    color = {0.9, 0.8, 0.1},
+    enabled = false,
 }
 
 -- Helper function to get enabled procs
