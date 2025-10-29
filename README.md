@@ -48,6 +48,7 @@ Each proc can use a different sound (1-5).
 - `/procem toggle` - Enable/disable tracking
 - `/procem soundforce` - Toggle forced alert volume
 - `/procem soundvol <0..1>` - Set forced alert volume (0.0–1.0)
+- `/procem chat` - Toggle chat notifications
 - `/procem reset` - Reset session counters
 - `/procem lock` - Lock window position
 - `/procem unlock` - Unlock window position

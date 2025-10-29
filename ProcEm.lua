@@ -266,7 +266,7 @@ function ProcEm:DetectBoss(unitName)
         -- This is likely a boss
         if unitName ~= self.currentBoss then
             self.currentBoss = unitName
-            self:Print("Now tracking procs vs: " .. tostring(unitName))
+            -- Removed verbose chat message for cleaner output
         end
     end
 end
@@ -287,7 +287,6 @@ function ProcEm:OnPlayerRegenEnabled()
 
     -- Clear boss after combat ends
     if self.currentBoss then
-        self:Print("Combat ended with " .. tostring(self.currentBoss))
         self.currentBoss = nil
     end
 end
@@ -305,7 +304,7 @@ function ProcEm:OnEvent(event)
     if event == "ADDON_LOADED" and arg1 == "ProcEm" then
         self:InitDatabase()
         self:InitSessionProcs()
-        self:Print("Loaded! Type /procem to configure.")
+        -- Quiet load
 
     elseif event == "PLAYER_LOGIN" then
         self:InitSessionProcs()
@@ -422,6 +421,10 @@ function ProcEm:SlashCommand(msg)
         ProcEmDB.soundForce = not ProcEmDB.soundForce
         self:Print("Sound force is now " .. (ProcEmDB.soundForce and "|cff00ff00ON|r" or "|cffff0000OFF|r"))
 
+    elseif msg == "chat" then
+        ProcEmDB.chatEnabled = not ProcEmDB.chatEnabled
+        self:Print("Chat notifications " .. (ProcEmDB.chatEnabled and "|cff00ff00enabled|r" or "|cffff0000disabled|r"))
+
     else
         self:Print("Commands:")
         self:Print("  /procem - Open configuration")
@@ -429,6 +432,7 @@ function ProcEm:SlashCommand(msg)
         self:Print("  /procem sound - Toggle sound notifications")
         self:Print("  /procem soundforce - Toggle force SFX+volume for alerts")
         self:Print("  /procem soundvol <0..1> - Set forced alert volume")
+        self:Print("  /procem chat - Toggle chat notifications")
         self:Print("  /procem reset - Reset session counters")
         self:Print("  /procem show/hide - Show/hide display")
         self:Print("  /procem lock/unlock - Lock/unlock display position")

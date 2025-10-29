@@ -164,10 +164,10 @@ function ProcEm:CreateConfigRow(index)
     testButton:SetScript("OnClick", function()
         local procName = ProcEm.trackedProcs[index]
         if procName then
-            local chatOk = true
+            local chatOk = ProcEmDB and ProcEmDB.chatEnabled
             if ProcEmDB and ProcEmDB.procChat and ProcEmDB.procChat[procName] then
                 if ProcEmDB.procChat[procName].enabled ~= nil then
-                    chatOk = ProcEmDB.procChat[procName].enabled
+                    chatOk = chatOk and ProcEmDB.procChat[procName].enabled
                 end
             end
             if chatOk then
@@ -436,7 +436,7 @@ function ProcEm:RefreshConfigUI()
             if not ProcEmDB.procChat then ProcEmDB.procChat = {} end
             if not ProcEmDB.procChat[procName] then ProcEmDB.procChat[procName] = {} end
             local chatEnabled = ProcEmDB.procChat[procName].enabled
-            if chatEnabled == nil then chatEnabled = true end -- default to true for backward compatibility
+            if chatEnabled == nil then chatEnabled = false end -- default to off
             row.msgCheck:SetChecked(chatEnabled)
             row.msgCheck:Show()
 
